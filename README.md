@@ -173,6 +173,103 @@ match: /summarize/i
 
 Si necesitas modificar el contenido del skill desplegado, edita el `cat > ... << 'EOF'` dentro del script. Si quieres incluir los `examples/`, descomenta las líneas relevantes (puede causar errores "Agent stopped" con PDFs largos).
 
+## Uso en Claude Code
+
+Claude Code descubre automáticamente los skills en el directorio `.claude/skills/` o `~/.claude/skills/`.
+
+### Instalación
+
+```bash
+# Instalación global (para todos los proyectos)
+SKILLS_DIR="$HOME/.claude/skills"
+mkdir -p "$SKILLS_DIR"
+cp -r skills/* "$SKILLS_DIR/"
+
+# Instalación por proyecto
+SKILLS_DIR=".claude/skills"
+mkdir -p "$SKILLS_DIR"
+cp -r skills/* "$SKILLS_DIR/"
+```
+
+### Uso
+
+En Claude Code, los skills se activan automáticamente cuando tu consulta coincide con la descripción del skill en el frontmatter. Ejemplos:
+
+- "Analiza este paper y extrae el PICO" → activa `extract-pico`
+- "Evalúa la calidad metodológica de este estudio" → activa `appraise-evidence`
+- "¿Es este paper relevante para mi práctica en España?" → activa `clinical-relevance`
+- "Sintetiza estos papers sobre el mismo tema" → activa `synthesize-collection`
+- "¿Cómo se relaciona este paper con las guías actuales?" → activa `compare-guidelines`
+
+### Ventajas de Claude Code
+
+- **Contexto completo:** Los skills tienen acceso a todo el contenido de SKILL.md, examples/ y schema.json
+- **Análisis detallado:** Mayor capacidad para análisis complejos (synthesize-collection con muchos papers)
+- **Iteración rápida:** Puedes ajustar prompts y ver resultados inmediatamente
+
+## Uso en Codex CLI
+
+Codex CLI no tiene un sistema de skills nativo, pero puede referenciar archivos markdown desde su `AGENTS.md`.
+
+### Instalación
+
+Crea o edita `AGENTS.md` en tu proyecto:
+
+```markdown
+# AGENTS.md
+
+When working on biomedical literature tasks, consult the relevant skill:
+
+- For paper extraction: see `medzotero-skills/skills/extract-pico/SKILL.md`
+- For critical appraisal: see `medzotero-skills/skills/appraise-evidence/SKILL.md`
+- For clinical relevance: see `medzotero-skills/skills/clinical-relevance/SKILL.md`
+- For multi-paper synthesis: see `medzotero-skills/skills/synthesize-collection/SKILL.md`
+- For guideline comparison: see `medzotero-skills/skills/compare-guidelines/SKILL.md`
+```
+
+Ajusta las rutas según la ubicación del repo `medzotero-skills` en tu sistema.
+
+### Uso
+
+Codex carga los skills referenciados según contexto cuando trabajes en tareas de literatura biomédica.
+
+## Uso de los examples
+
+Cada skill incluye 2 ejemplos sintéticos en `examples/` que demuestran:
+
+- **Formato de output esperado:** Estructura JSON completa y narrativa en español
+- **Cómo maneja edge cases:** Papers con características específicas (ej. RCTs, cohortes, guías)
+- **Calidad esperada:** Nivel de detalle y precisión que el modelo debe alcanzar
+
+### Para entender un skill
+
+Lee los examples antes de usar el skill para entender qué esperar del output:
+
+```bash
+# Ver ejemplo de extract-pico
+cat skills/extract-pico/examples/rct-example.md
+
+# Ver ejemplo de appraise-evidence
+cat skills/appraise-evidence/examples/rct-rob2-example.md
+
+# Ver ejemplo de clinical-relevance
+cat skills/clinical-relevance/examples/practice-changing-rct-example.md
+```
+
+### Para validar outputs
+
+Cuando uses los skills en Claude Code o LLM-for-Zotero, compara el output con los examples para verificar que:
+- El JSON sigue el schema correctamente
+- La narrativa en español tiene el formato esperado
+- El nivel de detalle es apropiado
+
+### Para crear nuevos examples
+
+Si encuentras papers que serían buenos ejemplos adicionales, crea un archivo en `examples/` siguiendo el formato:
+1. Paper metadata (synthetic o real)
+2. JSON output completo
+3. Narrativa en español
+
 ## Licencia
 
 MIT © 2026 Edmundo Rosales
