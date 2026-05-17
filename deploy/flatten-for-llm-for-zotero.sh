@@ -147,5 +147,77 @@ EOF
 
 echo "Wrote $OUTPUT_DIR/appraise-evidence.md"
 
+# ---------- clinical-relevance ----------
+cat > "$OUTPUT_DIR/clinical-relevance.md" << 'EOF'
+---
+id: clinical-relevance
+match: /clinical relevance/i
+match: /practice changing/i
+match: /change my practice/i
+match: /applicable to my patients/i
+match: /should i act/i
+match: /relevancia clínica/i
+---
+# Clinical Relevance
+
+Assess whether this paper changes clinical practice for Spanish pulmonology. Output JSON first, then Spanish narrative.
+
+## Workflow (5 dimensions)
+1. Effect magnitude — clinical vs statistical significance. Use MCIDs: 6MWD 30m, FEV1 100mL/10%, mMRC 1pt, CAT 2pt, SGRQ 4pt, K-BILD 5pt
+2. Population applicability to Spanish pneumology patients — age, smoking, exclusions
+3. Intervention availability in Spain — AEMPS status, SNS funding, procedure availability (EBUS, cryobiopsy, robotic bronchoscopy)
+4. Translation to practice — changes/confirmations/contradictions to current workflow
+5. Patient-relevant vs surrogate endpoints — mortality, hospitalization, QoL vs biomarkers
+
+## Output Schema (JSON first)
+
+```json
+{
+  "practice_changing": "yes | yes-with-caveats | confirms-current-practice | not-applicable | premature",
+  "effect_magnitude": {
+    "primary_outcome": "...",
+    "clinical_significance": "large | moderate | small | unclear",
+    "mcid_referenced": "...",
+    "absolute_effect": "..."
+  },
+  "population_applicability": {
+    "fit_to_spanish_pneumology": "high | moderate | low",
+    "key_exclusions_that_limit_applicability": ["..."]
+  },
+  "intervention_availability_spain": {
+    "available": "yes | restricted | no | not-yet",
+    "details": "...",
+    "aemps_status": "...",
+    "sns_funding": "..."
+  },
+  "patient_relevance": {
+    "endpoint_type": "patient-important | composite | surrogate",
+    "details": "..."
+  },
+  "actionable_changes": ["..."],
+  "implementation_barriers": ["..."],
+  "confidence_in_judgment": "high | medium | low"
+}
+```
+
+## Relevancia clínica (es-ES)
+**¿Cambia mi práctica?** sí / sí con reservas / confirma / no aplicable / prematuro
+**Magnitud del efecto:** ... (MCID, significancia clínica vs estadística)
+**Aplicabilidad al paciente del SNS:** ... (población, exclusiones)
+**Disponibilidad en España:** ... (AEMPS, financiación SNS)
+**Outcomes relevantes para el paciente:** ... (patient-important vs surrogate)
+**Acciones concretas:** ...
+**Barreras de implementación:** ...
+**Confianza del juicio:** alta / media / baja
+
+## Rules
+- Single small study non-replicated → "premature"
+- Industry-funded + single-center + surrogate → "premature"
+- Do not extrapolate beyond population studied
+- es-ES for narrative, English for JSON
+EOF
+
+echo "Wrote $OUTPUT_DIR/clinical-relevance.md"
+
 echo ""
 echo "All skills deployed. Restart Zotero to load."

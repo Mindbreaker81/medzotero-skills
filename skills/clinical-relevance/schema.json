@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/clinical-relevance-v1.json",
+  "title": "clinical-relevance-output",
+  "description": "Clinical relevance assessment of a biomedical paper for Spanish pulmonology practice",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["practice_changing", "confidence_in_judgment"],
+  "properties": {
+    "practice_changing": {
+      "type": "string",
+      "enum": ["yes", "yes-with-caveats", "confirms-current-practice", "not-applicable", "premature"],
+      "description": "Whether the paper changes clinical practice"
+    },
+    "effect_magnitude": {
+      "type": "object",
+      "properties": {
+        "primary_outcome": {"type": ["string", "null"]},
+        "clinical_significance": {
+          "type": ["string", "null"],
+          "enum": ["large", "moderate", "small", "unclear"]
+        },
+        "mcid_referenced": {"type": ["string", "null"]},
+        "absolute_effect": {"type": ["string", "null"]}
+      }
+    },
+    "population_applicability": {
+      "type": "object",
+      "properties": {
+        "fit_to_spanish_pneumology": {
+          "type": ["string", "null"],
+          "enum": ["high", "moderate", "low"]
+        },
+        "key_exclusions_that_limit_applicability": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "intervention_availability_spain": {
+      "type": "object",
+      "properties": {
+        "available": {
+          "type": ["string", "null"],
+          "enum": ["yes", "restricted", "no", "not-yet"]
+        },
+        "details": {"type": ["string", "null"]},
+        "aemps_status": {"type": ["string", "null"]},
+        "sns_funding": {"type": ["string", "null"]}
+      }
+    },
+    "patient_relevance": {
+      "type": "object",
+      "properties": {
+        "endpoint_type": {
+          "type": ["string", "null"],
+          "enum": ["patient-important", "composite", "surrogate"]
+        },
+        "details": {"type": ["string", "null"]}
+      }
+    },
+    "actionable_changes": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "implementation_barriers": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "confidence_in_judgment": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Confidence in the clinical relevance judgment"
+    }
+  }
+}

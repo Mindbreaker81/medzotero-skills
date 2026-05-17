@@ -23,9 +23,10 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 
 ### Estado actual
 
-- ✅ `extract-pico` — SKILL.md, schema.json, 2 ejemplos sintéticos; validado en LLM-for-Zotero Agent Mode (diagnostic accuracy, editorial, cohort prospective, RCT)
-- ✅ `appraise-evidence` — SKILL.md, schema.json (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM); validado en LLM-for-Zotero Agent Mode (NOS, QUADAS-2, ROB 2)
-- ⏳ `clinical-relevance`, `synthesize-collection`, `compare-guidelines` (planificados)
+- ✅ `extract-pico` — SKILL.md, schema.json y 2 ejemplos sintéticos
+- ✅ `appraise-evidence` — SKILL.md y schema.json (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM)
+- ✅ `clinical-relevance` — SKILL.md, schema.json, 2 ejemplos sintéticos, contexto AEMPS/SNS/SEPAR + MCIDs neumológicas
+- ⏳ `synthesize-collection`, `compare-guidelines` (planificados)
 
 ## Despliegue en LLM-for-Zotero
 
@@ -39,6 +40,7 @@ Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compati
 - Skills desplegados:
   - `extract-pico.md` — disparadores: `extract pico`, `summarize`, `analyze`, `what's the design`
   - `appraise-evidence.md` — disparadores: `appraise`, `critical appraisal`, `risk of bias`, `level of evidence`, `grade`, `should i trust`, `is this study good`
+  - `clinical-relevance.md` — disparadores: `clinical relevance`, `practice changing`, `change my practice`, `applicable to my patients`, `should i act`, `relevancia clínica`
 - Cada skill incluye frontmatter LLM-for-Zotero (`id` + `match` patterns)
 - Versiones simplificadas (~50-80 líneas) para que entren en el contexto del modelo incluso con PDFs largos
 - Excluye los `examples/` y los `schema.json` formales para reducir tokens (se mantienen en el repo para Claude Code y el plugin futuro)
