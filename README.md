@@ -1,5 +1,7 @@
 # medzotero-skills
 
+![medzotero-skills](public/medzotero_head.png)
+
 Kit de skills médicos para investigación biomédica en Zotero, especializado en neumología.
 
 ## Propósito
