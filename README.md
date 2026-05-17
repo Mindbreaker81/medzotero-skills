@@ -21,6 +21,11 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 
 🚧 Proyecto en fase inicial. Ver `docs/medzotero-skills-plan.md` para el plan detallado.
 
+### Estado actual
+
+- ✅ `extract-pico` (MVP) — implementado con SKILL.md, schema.json y 2 ejemplos sintéticos
+- ⏳ `appraise-evidence`, `clinical-relevance`, `synthesize-collection`, `compare-guidelines` (planificados)
+
 ## Licencia
 
 MIT © 2026 Edmundo Rosales

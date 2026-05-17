@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/extract-pico-v1.json",
+  "title": "extract-pico-output",
+  "description": "Structured extraction of study type and PICO (or variant) from a biomedical paper",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["study_type", "pico_applicable", "extraction_confidence"],
+  "properties": {
+    "study_type": {
+      "type": "string",
+      "enum": [
+        "rct",
+        "cluster-rct",
+        "crossover-rct",
+        "n-of-1-trial",
+        "non-randomized-controlled",
+        "cohort-prospective",
+        "cohort-retrospective",
+        "case-control",
+        "cross-sectional",
+        "case-series",
+        "case-report",
+        "diagnostic-accuracy",
+        "prognostic-model",
+        "systematic-review",
+        "scoping-review",
+        "narrative-review",
+        "clinical-practice-guideline",
+        "economic-evaluation",
+        "qualitative",
+        "mixed-methods",
+        "basic-translational",
+        "editorial-commentary",
+        "protocol",
+        "other"
+      ]
+    },
+    "meta_analysis": {
+      "type": ["boolean", "null"],
+      "description": "Whether the study includes a meta-analysis (relevant for systematic reviews)"
+    },
+    "pico_applicable": {
+      "type": "boolean",
+      "description": "Whether PICO (or variant) extraction is applicable to this study type"
+    },
+    "pico": {
+      "type": ["object", "null"],
+      "description": "PICO or variant extraction (null if pico_applicable is false)",
+      "properties": {
+        "population": {
+          "type": ["object", "null"],
+          "properties": {
+            "description": {"type": ["string", "null"]},
+            "key_inclusion_criteria": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "key_exclusion_criteria": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "setting": {"type": ["string", "null"]},
+            "country_or_region": {"type": ["string", "null"]}
+          }
+        },
+        "intervention": {
+          "type": ["object", "null"],
+          "properties": {
+            "description": {"type": ["string", "null"]},
+            "dose_or_intensity": {"type": ["string", "null"]},
+            "duration": {"type": ["string", "null"]}
+          }
+        },
+        "comparison": {
+          "type": ["object", "null"],
+          "properties": {
+            "description": {"type": ["string", "null"]},
+            "type": {
+              "type": ["string", "null"],
+              "enum": ["placebo", "active-comparator", "standard-of-care", "no-treatment", "historical-control"]
+            }
+          }
+        },
+        "outcomes": {
+          "type": ["object", "null"],
+          "properties": {
+            "primary": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "measurement": {"type": ["string", "null"]},
+                  "effect": {"type": ["string", "null"]},
+                  "ci_95": {"type": ["string", "null"]},
+                  "p_value": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "secondary": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "measurement": {"type": ["string", "null"]},
+                  "effect": {"type": ["string", "null"]},
+                  "ci_95": {"type": ["string", "null"]},
+                  "p_value": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "safety": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "effect": {"type": ["string", "null"]},
+                  "ci_95": {"type": ["string", "null"]},
+                  "p_value": {"type": ["string", "null"]}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sample_size": {
+      "type": "object",
+      "properties": {
+        "screened": {"type": ["integer", "null"]},
+        "enrolled": {"type": ["integer", "null"]},
+        "analyzed": {"type": ["integer", "null"]},
+        "lost_to_followup": {"type": ["integer", "null"]},
+        "analysis_type": {
+          "type": ["string", "null"],
+          "enum": ["itt", "per-protocol", "modified-itt", "as-treated", "complete-case"]
+        }
+      }
+    },
+    "duration": {
+      "type": "object",
+      "properties": {
+        "enrollment_period": {"type": ["string", "null"]},
+        "follow_up_median": {"type": ["string", "null"]},
+        "follow_up_range": {"type": ["string", "null"]}
+      }
+    },
+    "funding": {
+      "type": ["string", "null"],
+      "description": "Free-text description of funding sources"
+    },
+    "conflicts_of_interest": {
+      "type": ["string", "null"],
+      "description": "Free-text description of conflicts of interest"
+    },
+    "registration": {
+      "type": ["object", "null"],
+      "properties": {
+        "id": {"type": ["string", "null"]},
+        "registry": {"type": ["string", "null"]}
+      }
+    },
+    "key_limitations_stated_by_authors": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "extraction_confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Confidence in the extraction quality based on available information"
+    },
+    "extraction_notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes about the extraction process (e.g., abstract-only, conference abstract)"
+    }
+  }
+}
