@@ -23,8 +23,8 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 
 ### Estado actual
 
-- ✅ `extract-pico` — SKILL.md, schema.json y 2 ejemplos sintéticos
-- ✅ `appraise-evidence` — SKILL.md y schema.json (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM)
+- ✅ `extract-pico` — SKILL.md, schema.json, 2 ejemplos sintéticos; validado en LLM-for-Zotero Agent Mode (diagnostic accuracy, editorial, cohort prospective, RCT)
+- ✅ `appraise-evidence` — SKILL.md, schema.json (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM); validado en LLM-for-Zotero Agent Mode (NOS, QUADAS-2, ROB 2)
 - ⏳ `clinical-relevance`, `synthesize-collection`, `compare-guidelines` (planificados)
 
 ## Despliegue en LLM-for-Zotero
