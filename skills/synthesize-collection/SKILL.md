@@ -45,6 +45,13 @@ Output is JSON-first (machine-readable for the future plugin), followed by a Spa
 - If you need to find related papers, use Zotero search but DO NOT modify any item.
 - If only one paper is selected, ask the user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
 
+**When searching Zotero collection for related papers:**
+- Use SPECIFIC search terms from the selected paper: title keywords, first author, year, journal.
+- Search for the specific clinical question/intervention/comparator (e.g., "azithromycin bronchiectasis BAT EMBRACE").
+- Filter by item type: only include original research articles (RCTs, cohort studies, case series). EXCLUDE guidelines, reviews, editorials, commentaries unless explicitly requested.
+- Limit search to the user's Zotero library — do NOT search outside sources.
+- If the search returns too many irrelevant results (e.g., treatment guidelines instead of original studies), ask the user to paste the specific papers they want synthesized or to narrow the search terms.
+
 ### 1. Clarify the clinical question
 
 If not provided, infer it from the papers and confirm with the user before proceeding. Format as PICO if possible (or PIO / PIRD for non-intervention questions). State explicitly:

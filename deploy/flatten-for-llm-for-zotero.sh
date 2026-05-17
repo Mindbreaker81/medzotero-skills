@@ -243,6 +243,13 @@ Synthesize evidence across multiple papers on the same clinical question. Output
 - ONLY read and analyze papers for synthesis.
 - If you need to find related papers, use Zotero search but DO NOT modify any item.
 
+## When searching Zotero collection for related papers:
+- Use SPECIFIC search terms from the selected paper: title keywords, first author, year, journal.
+- Search for the specific clinical question/intervention/comparator (e.g., "azithromycin bronchiectasis BAT EMBRACE").
+- Filter by item type: only include original research articles (RCTs, cohort studies, case series). EXCLUDE guidelines, reviews, editorials, commentaries unless explicitly requested.
+- Limit search to the user's Zotero library — do NOT search outside sources.
+- If the search returns too many irrelevant results (e.g., treatment guidelines instead of original studies), ask the user to paste the specific papers they want synthesized or to narrow the search terms.
+
 ## Workflow (6 steps)
 1. If only one paper selected: ask user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
 2. Clarify clinical question (PICO / PIO / PIRD). If papers span different questions, ask user to narrow the set.
