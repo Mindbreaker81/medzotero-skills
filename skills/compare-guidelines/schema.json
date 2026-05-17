@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/compare-guidelines-v1.json",
+  "title": "compare-guidelines-output",
+  "description": "Comparison of a biomedical paper (or set of papers) against current clinical practice guidelines",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "clinical_topic",
+    "relevant_guidelines",
+    "overall_alignment",
+    "knowledge_cutoff_caveat",
+    "confidence"
+  ],
+  "properties": {
+    "clinical_topic": {
+      "type": "string",
+      "description": "Clinical topic of the paper used to select relevant guidelines"
+    },
+    "paper_summary_for_comparison": {
+      "type": ["string", "null"],
+      "description": "One-paragraph summary of the paper's question and main finding, written for the guideline-comparison context"
+    },
+    "relevant_guidelines": {
+      "type": "array",
+      "description": "Each guideline relevant to the paper's topic. Empty array if no major guideline covers the topic.",
+      "items": {
+        "type": "object",
+        "required": ["society", "alignment"],
+        "properties": {
+          "society": {
+            "type": "string",
+            "description": "Issuing society or organization (e.g., SEPAR, ATS, ERS, GOLD, GINA, IASLC, NICE, AASM)"
+          },
+          "title": {"type": ["string", "null"]},
+          "year": {
+            "type": ["integer", "null"],
+            "description": "Publication or last-update year of the cited guideline version"
+          },
+          "version": {
+            "type": ["string", "null"],
+            "description": "Specific version label (e.g., 'GOLD 2024', 'IPF 2022 update', 'GesEPOC 2021')"
+          },
+          "specific_recommendation_quoted": {
+            "type": ["string", "null"],
+            "description": "The recommendation text affected by the paper. Preserve original language."
+          },
+          "recommendation_is_paraphrased": {
+            "type": "boolean",
+            "default": false,
+            "description": "True if the recommendation is paraphrased rather than quoted verbatim"
+          },
+          "recommendation_strength": {
+            "type": ["string", "null"],
+            "enum": ["strong", "conditional", "weak", "good-practice-statement", "not-stated", null]
+          },
+          "evidence_certainty_in_guideline": {
+            "type": ["string", "null"],
+            "enum": ["high", "moderate", "low", "very-low", "not-stated", null]
+          },
+          "alignment": {
+            "type": "string",
+            "enum": ["aligned", "extends", "refines", "contradicts", "premature-to-change"]
+          },
+          "rationale": {
+            "type": ["string", "null"],
+            "description": "Why this alignment was chosen for this guideline"
+          },
+          "guideline_url": {
+            "type": ["string", "null"],
+            "description": "URL of the guideline source (society website or DOI)"
+          }
+        }
+      }
+    },
+    "overall_alignment": {
+      "type": "string",
+      "enum": ["aligned", "extends", "refines", "contradicts", "premature-to-change", "mixed", "no-relevant-guideline"],
+      "description": "Overall classification across all cited guidelines. Use 'mixed' when guidelines diverge."
+    },
+    "relative_evidence_strength": {
+      "type": ["string", "null"],
+      "enum": ["paper-stronger", "paper-weaker", "comparable", "not-directly-comparable", null],
+      "description": "Strength of evidence in the paper vs strength of evidence behind current recommendation(s)"
+    },
+    "recommended_action": {
+      "type": ["string", "null"],
+      "enum": [
+        "continue-current-practice",
+        "monitor-for-guideline-update",
+        "discuss-in-mdd",
+        "wait-for-replication",
+        "consider-individualized-change",
+        null
+      ]
+    },
+    "recommended_action_rationale": {
+      "type": ["string", "null"]
+    },
+    "knowledge_cutoff_caveat": {
+      "type": "string",
+      "description": "Mandatory statement that guidelines may have been updated since the model's training cutoff and that the user should verify the live source"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Confidence in the comparison (independent of strength of evidence in either the paper or the guideline)"
+    },
+    "comparison_notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes: divergences between societies, topics not covered, approximate quotations, model uncertainty"
+    }
+  }
+}

@@ -19,7 +19,7 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 
 ## Estado
 
-🚧 Proyecto en fase inicial. Ver `docs/medzotero-skills-plan.md` para el plan detallado.
+✅ Fase 1 completa: 5 skills implementados. Ver `docs/medzotero-skills-plan.md` para el plan detallado y los criterios go/no-go para la Fase 2 (plugin).
 
 ### Estado actual
 
@@ -27,7 +27,7 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 - ✅ `appraise-evidence` — SKILL.md y schema.json (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM)
 - ✅ `clinical-relevance` — SKILL.md, schema.json, 2 ejemplos sintéticos, contexto AEMPS/SNS/SEPAR + MCIDs neumológicas
 - ✅ `synthesize-collection` — SKILL.md, schema.json, 2 ejemplos sintéticos (mapa de evidencia, consistencia, GRADE agregado, gaps, implicaciones para la práctica)
-- ⏳ `compare-guidelines` (planificado)
+- ✅ `compare-guidelines` — SKILL.md, schema.json, 2 ejemplos sintéticos, mapeo de guías mayores (SEPAR, ATS, ERS, GOLD, GINA, IASLC, NICE, AASM…) con caveat obligatorio de cutoff de entrenamiento
 
 ## Despliegue en LLM-for-Zotero
 
@@ -43,6 +43,7 @@ Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compati
   - `appraise-evidence.md` — disparadores: `appraise`, `critical appraisal`, `risk of bias`, `level of evidence`, `grade`, `should i trust`, `is this study good`
   - `clinical-relevance.md` — disparadores: `clinical relevance`, `practice changing`, `change my practice`, `applicable to my patients`, `should i act`, `relevancia clínica`
   - `synthesize-collection.md` — disparadores: `synthesize collection`, `evidence synthesis`, `what does the evidence say`, `summarize my collection`, `evidence gaps`, `síntesis de evidencia`
+  - `compare-guidelines.md` — disparadores: `compare guidelines`, `what do guidelines say`, `does this contradict`, `should guidelines change`, `consistent with separ/ats/ers/gold/gina`, `comparar con guías`
 - Cada skill incluye frontmatter LLM-for-Zotero (`id` + `match` patterns)
 - Versiones simplificadas (~50-80 líneas) para que entren en el contexto del modelo incluso con PDFs largos
 - Excluye los `examples/` y los `schema.json` formales para reducir tokens (se mantienen en el repo para Claude Code y el plugin futuro)

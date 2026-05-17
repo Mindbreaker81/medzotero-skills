@@ -321,5 +321,99 @@ EOF
 
 echo "Wrote $OUTPUT_DIR/synthesize-collection.md"
 
+# ---------- compare-guidelines ----------
+cat > "$OUTPUT_DIR/compare-guidelines.md" << 'EOF'
+---
+id: compare-guidelines
+match: /compare guidelines/i
+match: /what do guidelines say/i
+match: /does this contradict/i
+match: /should guidelines change/i
+match: /consistent with separ/i
+match: /consistent with ats/i
+match: /consistent with ers/i
+match: /consistent with gold/i
+match: /consistent with gina/i
+match: /comparar con guías/i
+match: /comparar con guias/i
+---
+# Compare Guidelines
+
+Compare a paper against current clinical practice guidelines (SEPAR, ATS, ERS, GOLD, GINA, IASLC, ESMO, NICE, AASM, etc.). Output JSON first, then Spanish narrative.
+
+## Critical: knowledge cutoff caveat
+Always state guideline version/year. Always include knowledge_cutoff_caveat in JSON and narrative. Recommend the user verify the live source. Never invent a guideline or recommendation.
+
+## Workflow
+1. Identify relevant guidelines by topic (COPD: GOLD/GesEPOC; Asthma: GINA/GEMA; Lung cancer: IASLC/NCCN/ESMO/SEPAR; Nodules: Fleischner/BTS/Lung-RADS; ILD: ATS/ERS/JRS/ALAT; PH: ESC/ERS 2022; NTM: ATS/ERS/ESCMID/IDSA 2020; Sleep: AASM/SEPAR; Bronchoscopy: ACCP/ERS/SEPAR; CAP: ATS/IDSA/SEPAR; etc.)
+2. Locate specific recommendation: quote (or paraphrase, flag if paraphrased), strength, certainty, year
+3. Classify alignment per guideline: aligned / extends / refines / contradicts / premature-to-change
+4. Assess relative evidence strength: paper-stronger / paper-weaker / comparable / not-directly-comparable
+5. Recommend action: continue-current-practice / monitor-for-guideline-update / discuss-in-mdd / wait-for-replication / consider-individualized-change
+6. Always include knowledge_cutoff_caveat
+
+## Output Schema (JSON first)
+
+```json
+{
+  "clinical_topic": "...",
+  "paper_summary_for_comparison": "...",
+  "relevant_guidelines": [
+    {
+      "society": "SEPAR",
+      "title": "...",
+      "year": 2023,
+      "version": "...",
+      "specific_recommendation_quoted": "...",
+      "recommendation_is_paraphrased": false,
+      "recommendation_strength": "strong | conditional | weak | not-stated",
+      "evidence_certainty_in_guideline": "high | moderate | low | very-low | not-stated",
+      "alignment": "aligned | extends | refines | contradicts | premature-to-change",
+      "rationale": "...",
+      "guideline_url": "..."
+    }
+  ],
+  "overall_alignment": "aligned | extends | refines | contradicts | premature-to-change | mixed | no-relevant-guideline",
+  "relative_evidence_strength": "paper-stronger | paper-weaker | comparable | not-directly-comparable",
+  "recommended_action": "continue-current-practice | monitor-for-guideline-update | discuss-in-mdd | wait-for-replication | consider-individualized-change",
+  "recommended_action_rationale": "...",
+  "knowledge_cutoff_caveat": "Las guías pueden haber sido actualizadas desde el entrenamiento del modelo. Verifique en [URL].",
+  "confidence": "high | medium | low",
+  "comparison_notes": "..."
+}
+```
+
+## Comparación con guías clínicas (es-ES)
+**Tema clínico:** ...
+**Resumen del paper para la comparación:** ...
+
+### Guías relevantes
+- **[Sociedad, año, versión]** — Recomendación: "..." (fuerza: ...; certeza: ...). **Alineación:** ...
+  - Razón: ...
+  - URL: ...
+
+### Fuerza relativa de la evidencia
+**Paper vs guía:** ... — razón
+
+### Acción recomendada
+... — razón
+
+### Caveat sobre actualización de guías
+Las recomendaciones citadas reflejan el conocimiento del modelo en el momento de su entrenamiento. **Verifique la versión vigente en [URL/sociedad].**
+
+**Confianza de la comparación:** alta / media / baja — razón
+
+## Rules
+- Always include knowledge_cutoff_caveat (mandatory)
+- Single small study + high RoB → alignment: "premature-to-change" regardless of effect direction
+- Multiple guidelines disagreeing → present each separately; overall_alignment: "mixed"
+- Topic not covered by any guideline → relevant_guidelines: []; comparison_notes: "no major guideline covers this topic to the model's knowledge"
+- If quoting is approximate → set recommendation_is_paraphrased: true; warn user to verify exact text
+- Cite SEPAR alongside international guidelines for Spanish context when applicable
+- es-ES for narrative, English for JSON; preserve original-language guideline text
+EOF
+
+echo "Wrote $OUTPUT_DIR/compare-guidelines.md"
+
 echo ""
 echo "All skills deployed. Restart Zotero to load."
