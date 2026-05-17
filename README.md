@@ -83,8 +83,8 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 ### Estado actual
 
 - ✅ `extract-pico` — SKILL.md, schema.json y 2 ejemplos sintéticos
-- ✅ `appraise-evidence` — SKILL.md y schema.json (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM)
-- ✅ `clinical-relevance` — SKILL.md, schema.json, 2 ejemplos sintéticos, contexto AEMPS/SNS/SEPAR + MCIDs neumológicas
+- ✅ `appraise-evidence` — SKILL.md, schema.json y 2 ejemplos sintéticos (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM)
+- ✅ `clinical-relevance` — SKILL.md, schema.json, 2 ejemplos sintéticos, contexto AEMPS/SNS/SEPAR + MCIDs neumológicos
 - ✅ `synthesize-collection` — SKILL.md, schema.json, 2 ejemplos sintéticos (mapa de evidencia, consistencia, GRADE agregado, gaps, implicaciones para la práctica)
 - ✅ `compare-guidelines` — SKILL.md, schema.json, 2 ejemplos sintéticos, mapeo de guías mayores (SEPAR, ATS, ERS, GOLD, GINA, IASLC, NICE, AASM…) con caveat obligatorio de cutoff de entrenamiento
 
