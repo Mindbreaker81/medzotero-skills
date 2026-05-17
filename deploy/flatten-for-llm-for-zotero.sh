@@ -238,13 +238,19 @@ Synthesize evidence across multiple papers on the same clinical question. Output
 - Multiple papers (Zotero collection, selection, or pasted abstracts).
 - Optional: focused clinical question. If absent, infer and confirm in PICO format before synthesizing.
 
+## CRITICAL: Do NOT modify Zotero metadata
+- NEVER modify title, authors, journal, year, or any Zotero item metadata.
+- ONLY read and analyze papers for synthesis.
+- If you need to find related papers, use Zotero search but DO NOT modify any item.
+
 ## Workflow (6 steps)
-1. Clarify clinical question (PICO / PIO / PIRD). If papers span different questions, ask user to narrow the set.
-2. Build evidence map: one row per study with study_id, design, country, n, population, intervention, comparator, primary_outcome (name/effect/ci_95), ocebm_level, risk_of_bias, key_limitations, funding.
-3. Assess consistency: direction_of_effect (consistent/mixed/conflicting), magnitude_consistency, explanations_for_discordance (population, intervention, methodology, era, funding).
-4. Aggregate quality: study designs distribution, RoB distribution, GRADE certainty for primary outcome (start High for RCT body / Low for observational; downgrade for risk-of-bias, inconsistency, indirectness, imprecision, publication-bias).
-5. Identify evidence gaps: populations underrepresented, outcomes not studied, comparators not tested, settings not studied, methodological gaps.
-6. Practice implications: supported / not_supported / requires_individualization / high_priority_research.
+1. If only one paper selected: ask user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
+2. Clarify clinical question (PICO / PIO / PIRD). If papers span different questions, ask user to narrow the set.
+3. Build evidence map: one row per study with study_id, design, country, n, population, intervention, comparator, primary_outcome (name/effect/ci_95), ocebm_level, risk_of_bias, key_limitations, funding.
+4. Assess consistency: direction_of_effect (consistent/mixed/conflicting), magnitude_consistency, explanations_for_discordance (population, intervention, methodology, era, funding).
+5. Aggregate quality: study designs distribution, RoB distribution, GRADE certainty for primary outcome (start High for RCT body / Low for observational; downgrade for risk-of-bias, inconsistency, indirectness, imprecision, publication-bias).
+6. Identify evidence gaps: populations underrepresented, outcomes not studied, comparators not tested, settings not studied, methodological gaps.
+7. Practice implications: supported / not_supported / requires_individualization / high_priority_research.
 
 ## Output Schema (JSON first)
 

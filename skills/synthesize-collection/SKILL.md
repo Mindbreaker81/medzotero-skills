@@ -37,6 +37,14 @@ Output is JSON-first (machine-readable for the future plugin), followed by a Spa
 
 ## Workflow
 
+### 0. CRITICAL: Do NOT modify Zotero metadata
+
+**When running in LLM-for-Zotero Agent Mode:**
+- NEVER modify title, authors, journal, year, or any Zotero item metadata.
+- ONLY read and analyze papers for synthesis.
+- If you need to find related papers, use Zotero search but DO NOT modify any item.
+- If only one paper is selected, ask the user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
+
 ### 1. Clarify the clinical question
 
 If not provided, infer it from the papers and confirm with the user before proceeding. Format as PICO if possible (or PIO / PIRD for non-intervention questions). State explicitly:
