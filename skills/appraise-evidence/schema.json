@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/appraise-evidence-v1.json",
+  "title": "appraise-evidence-output",
+  "description": "Critical appraisal of a biomedical paper with OCEBM, GRADE and study-type-specific risk-of-bias tool",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["study_type_resolved", "appraisal_applicable", "appraisal_confidence"],
+  "properties": {
+    "study_type_resolved": {
+      "type": "string",
+      "description": "Study type used to select the appraisal tool (matches extract-pico enum)"
+    },
+    "ocebm_level": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "maximum": 5,
+      "description": "OCEBM 2011 Level of Evidence (1 to 5)"
+    },
+    "ocebm_question_type": {
+      "type": ["string", "null"],
+      "enum": ["therapy", "diagnosis", "prognosis", "harm", "screening", "etiology", "economic"]
+    },
+    "appraisal_tool": {
+      "type": ["string", "null"],
+      "enum": ["rob-2", "amstar-2", "nos-cohort", "nos-case-control", "quadas-2", "probast", "agree-ii", "casp-qualitative", "jbi-case-report", "jbi-case-series", "robins-i", "narrative-only"]
+    },
+    "appraisal_applicable": {
+      "type": "boolean",
+      "description": "Whether a formal appraisal tool applies to this study type"
+    },
+    "rob_2": {
+      "type": ["object", "null"],
+      "description": "Cochrane Risk of Bias 2.0 (for RCTs)",
+      "properties": {
+        "domain_1_randomization": {"$ref": "#/$defs/rob2Domain"},
+        "domain_2_deviations": {"$ref": "#/$defs/rob2Domain"},
+        "domain_3_missing_data": {"$ref": "#/$defs/rob2Domain"},
+        "domain_4_measurement": {"$ref": "#/$defs/rob2Domain"},
+        "domain_5_selection_of_reported_result": {"$ref": "#/$defs/rob2Domain"},
+        "overall": {"type": "string", "enum": ["low", "some-concerns", "high", "no-information"]}
+      }
+    },
+    "amstar_2": {
+      "type": ["object", "null"],
+      "description": "AMSTAR-2 (for systematic reviews)",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item_number": {"type": "integer"},
+              "item_description": {"type": "string"},
+              "is_critical_domain": {"type": "boolean"},
+              "judgment": {"type": "string", "enum": ["yes", "partial-yes", "no", "no-meta-analysis"]},
+              "rationale": {"type": "string"}
+            }
+          }
+        },
+        "overall_confidence": {"type": "string", "enum": ["high", "moderate", "low", "critically-low"]}
+      }
+    },
+    "nos": {
+      "type": ["object", "null"],
+      "description": "Newcastle-Ottawa Scale (for cohort or case-control)",
+      "properties": {
+        "version": {"type": "string", "enum": ["cohort", "case-control"]},
+        "selection_stars": {"type": "integer", "minimum": 0, "maximum": 4},
+        "comparability_stars": {"type": "integer", "minimum": 0, "maximum": 2},
+        "outcome_or_exposure_stars": {"type": "integer", "minimum": 0, "maximum": 3},
+        "total_stars": {"type": "integer", "minimum": 0, "maximum": 9},
+        "domain_rationales": {"type": "object"}
+      }
+    },
+    "quadas_2": {
+      "type": ["object", "null"],
+      "description": "QUADAS-2 (for diagnostic accuracy studies)",
+      "properties": {
+        "patient_selection": {"$ref": "#/$defs/quadasDomain"},
+        "index_test": {"$ref": "#/$defs/quadasDomain"},
+        "reference_standard": {"$ref": "#/$defs/quadasDomain"},
+        "flow_and_timing": {"$ref": "#/$defs/quadasDomainFlowOnly"}
+      }
+    },
+    "probast": {
+      "type": ["object", "null"],
+      "description": "PROBAST (for prognostic models)",
+      "properties": {
+        "participants": {"$ref": "#/$defs/probastDomain"},
+        "predictors": {"$ref": "#/$defs/probastDomain"},
+        "outcome": {"$ref": "#/$defs/probastDomain"},
+        "analysis": {"$ref": "#/$defs/probastDomain"},
+        "overall_rob": {"type": "string", "enum": ["low", "high", "unclear"]}
+      }
+    },
+    "agree_ii": {
+      "type": ["object", "null"],
+      "description": "AGREE II (for clinical practice guidelines)",
+      "properties": {
+        "scope_and_purpose": {"type": "number"},
+        "stakeholder_involvement": {"type": "number"},
+        "rigour_of_development": {"type": "number"},
+        "clarity_of_presentation": {"type": "number"},
+        "applicability": {"type": "number"},
+        "editorial_independence": {"type": "number"},
+        "overall_quality": {"type": "number"}
+      }
+    },
+    "robins_i": {
+      "type": ["object", "null"],
+      "description": "ROBINS-I (for non-randomized intervention studies)",
+      "properties": {
+        "confounding": {"$ref": "#/$defs/robinsDomain"},
+        "selection": {"$ref": "#/$defs/robinsDomain"},
+        "classification_of_interventions": {"$ref": "#/$defs/robinsDomain"},
+        "deviations_from_intended_interventions": {"$ref": "#/$defs/robinsDomain"},
+        "missing_data": {"$ref": "#/$defs/robinsDomain"},
+        "measurement_of_outcomes": {"$ref": "#/$defs/robinsDomain"},
+        "selection_of_reported_result": {"$ref": "#/$defs/robinsDomain"},
+        "overall": {"type": "string", "enum": ["low", "moderate", "serious", "critical", "no-information"]}
+      }
+    },
+    "grade_assessment": {
+      "type": ["object", "null"],
+      "properties": {
+        "outcome": {"type": "string"},
+        "starting_certainty": {"type": "string", "enum": ["high", "low"]},
+        "downgrades": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "reason": {"type": "string", "enum": ["risk-of-bias", "inconsistency", "indirectness", "imprecision", "publication-bias"]},
+              "magnitude": {"type": "integer", "minimum": 1, "maximum": 2},
+              "rationale": {"type": "string"}
+            }
+          }
+        },
+        "upgrades": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "reason": {"type": "string", "enum": ["large-effect", "dose-response", "plausible-confounding-reduces-effect"]},
+              "magnitude": {"type": "integer", "minimum": 1, "maximum": 2},
+              "rationale": {"type": "string"}
+            }
+          }
+        },
+        "final_certainty": {"type": "string", "enum": ["very-low", "low", "moderate", "high"]},
+        "rationale": {"type": "string"}
+      }
+    },
+    "red_flags": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "appraiser_overall_judgment": {
+      "type": "string",
+      "enum": ["trustworthy", "trustworthy-with-caveats", "use-with-caution", "unreliable", "not-applicable"]
+    },
+    "appraisal_confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"]
+    }
+  },
+  "$defs": {
+    "rob2Domain": {
+      "type": "object",
+      "properties": {
+        "judgment": {"type": "string", "enum": ["low", "some-concerns", "high", "no-information"]},
+        "rationale": {"type": "string"}
+      }
+    },
+    "quadasDomain": {
+      "type": "object",
+      "properties": {
+        "risk_of_bias": {"type": "string", "enum": ["low", "high", "unclear"]},
+        "applicability": {"type": "string", "enum": ["low", "high", "unclear"]},
+        "rationale": {"type": "string"}
+      }
+    },
+    "quadasDomainFlowOnly": {
+      "type": "object",
+      "properties": {
+        "risk_of_bias": {"type": "string", "enum": ["low", "high", "unclear"]},
+        "rationale": {"type": "string"}
+      }
+    },
+    "probastDomain": {
+      "type": "object",
+      "properties": {
+        "risk_of_bias": {"type": "string", "enum": ["low", "high", "unclear"]},
+        "applicability": {"type": "string", "enum": ["low", "high", "unclear"]},
+        "rationale": {"type": "string"}
+      }
+    },
+    "robinsDomain": {
+      "type": "object",
+      "properties": {
+        "judgment": {"type": "string", "enum": ["low", "moderate", "serious", "critical", "no-information"]},
+        "rationale": {"type": "string"}
+      }
+    }
+  }
+}

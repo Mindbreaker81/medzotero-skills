@@ -23,8 +23,9 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 
 ### Estado actual
 
-- ✅ `extract-pico` (MVP) — implementado con SKILL.md, schema.json y 2 ejemplos sintéticos
-- ⏳ `appraise-evidence`, `clinical-relevance`, `synthesize-collection`, `compare-guidelines` (planificados)
+- ✅ `extract-pico` — SKILL.md, schema.json y 2 ejemplos sintéticos
+- ✅ `appraise-evidence` — SKILL.md y schema.json (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM)
+- ⏳ `clinical-relevance`, `synthesize-collection`, `compare-guidelines` (planificados)
 
 ## Despliegue en LLM-for-Zotero
 
@@ -32,12 +33,15 @@ LLM-for-Zotero usa un formato de skill diferente al de Claude Code: requiere `id
 
 ### Script `deploy/flatten-for-llm-for-zotero.sh`
 
-Convierte el `SKILL.md` (formato Claude Code) a una versión ultra-minimal compatible con LLM-for-Zotero Agent Mode. Características:
+Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compatibles con LLM-for-Zotero Agent Mode. Características:
 
-- Genera el archivo en `${ZOTERO_DATA_DIR:-$HOME/Zotero}/llm-for-zotero/skills/extract-pico.md`
-- Añade frontmatter con `id: extract-pico` y `match` patterns (`extract pico`, `summarize`, `analyze`, `what's the design`)
-- Versión simplificada (~50 líneas) para que entre en el contexto del modelo incluso con PDFs largos
-- Excluye los `examples/` para reducir tokens (los ejemplos se mantienen en el repo para Claude Code)
+- Genera un `.md` por skill en `${ZOTERO_DATA_DIR:-$HOME/Zotero}/llm-for-zotero/skills/`
+- Skills desplegados:
+  - `extract-pico.md` — disparadores: `extract pico`, `summarize`, `analyze`, `what's the design`
+  - `appraise-evidence.md` — disparadores: `appraise`, `critical appraisal`, `risk of bias`, `level of evidence`, `grade`, `should i trust`, `is this study good`
+- Cada skill incluye frontmatter LLM-for-Zotero (`id` + `match` patterns)
+- Versiones simplificadas (~50-80 líneas) para que entren en el contexto del modelo incluso con PDFs largos
+- Excluye los `examples/` y los `schema.json` formales para reducir tokens (se mantienen en el repo para Claude Code y el plugin futuro)
 
 ### Uso
 
