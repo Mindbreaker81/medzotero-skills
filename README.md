@@ -26,6 +26,48 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 - ✅ `extract-pico` (MVP) — implementado con SKILL.md, schema.json y 2 ejemplos sintéticos
 - ⏳ `appraise-evidence`, `clinical-relevance`, `synthesize-collection`, `compare-guidelines` (planificados)
 
+## Despliegue en LLM-for-Zotero
+
+LLM-for-Zotero usa un formato de skill diferente al de Claude Code: requiere `id` + `match` patterns (regex) en lugar de `name` + `description`, y los skills solo se disparan en **Agent Mode**.
+
+### Script `deploy/flatten-for-llm-for-zotero.sh`
+
+Convierte el `SKILL.md` (formato Claude Code) a una versión ultra-minimal compatible con LLM-for-Zotero Agent Mode. Características:
+
+- Genera el archivo en `${ZOTERO_DATA_DIR:-$HOME/Zotero}/llm-for-zotero/skills/extract-pico.md`
+- Añade frontmatter con `id: extract-pico` y `match` patterns (`extract pico`, `summarize`, `analyze`, `what's the design`)
+- Versión simplificada (~50 líneas) para que entre en el contexto del modelo incluso con PDFs largos
+- Excluye los `examples/` para reducir tokens (los ejemplos se mantienen en el repo para Claude Code)
+
+### Uso
+
+```bash
+# 1. Ejecuta el script
+./deploy/flatten-for-llm-for-zotero.sh
+
+# 2. Reinicia Zotero
+
+# 3. En Zotero:
+#    - Activa Agent Mode en Preferences → llm-for-zotero
+#    - Abre Standalone Window con Cmd+Shift+L (macOS) o Ctrl+Shift+L (Linux/Windows)
+#    - Selecciona el skill con / o escribe "extract pico"
+```
+
+### Formato esperado (LLM-for-Zotero)
+
+```yaml
+---
+id: extract-pico
+match: /extract pico/i
+match: /summarize/i
+---
+[instrucciones del skill]
+```
+
+### Personalización
+
+Si necesitas modificar el contenido del skill desplegado, edita el `cat > ... << 'EOF'` dentro del script. Si quieres incluir los `examples/`, descomenta las líneas relevantes (puede causar errores "Agent stopped" con PDFs largos).
+
 ## Licencia
 
 MIT © 2026 Edmundo Rosales
