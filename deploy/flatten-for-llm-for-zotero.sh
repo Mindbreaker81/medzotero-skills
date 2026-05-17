@@ -219,5 +219,107 @@ EOF
 
 echo "Wrote $OUTPUT_DIR/clinical-relevance.md"
 
+# ---------- synthesize-collection ----------
+cat > "$OUTPUT_DIR/synthesize-collection.md" << 'EOF'
+---
+id: synthesize-collection
+match: /synthesize collection/i
+match: /evidence synthesis/i
+match: /what does the evidence say/i
+match: /summarize my collection/i
+match: /evidence gaps/i
+match: /síntesis de evidencia/i
+---
+# Synthesize Collection
+
+Synthesize evidence across multiple papers on the same clinical question. Output JSON first, then Spanish narrative with markdown evidence map table.
+
+## Inputs
+- Multiple papers (Zotero collection, selection, or pasted abstracts).
+- Optional: focused clinical question. If absent, infer and confirm in PICO format before synthesizing.
+
+## Workflow (6 steps)
+1. Clarify clinical question (PICO / PIO / PIRD). If papers span different questions, ask user to narrow the set.
+2. Build evidence map: one row per study with study_id, design, country, n, population, intervention, comparator, primary_outcome (name/effect/ci_95), ocebm_level, risk_of_bias, key_limitations, funding.
+3. Assess consistency: direction_of_effect (consistent/mixed/conflicting), magnitude_consistency, explanations_for_discordance (population, intervention, methodology, era, funding).
+4. Aggregate quality: study designs distribution, RoB distribution, GRADE certainty for primary outcome (start High for RCT body / Low for observational; downgrade for risk-of-bias, inconsistency, indirectness, imprecision, publication-bias).
+5. Identify evidence gaps: populations underrepresented, outcomes not studied, comparators not tested, settings not studied, methodological gaps.
+6. Practice implications: supported / not_supported / requires_individualization / high_priority_research.
+
+## Output Schema (JSON first)
+
+```json
+{
+  "clinical_question": "...",
+  "number_of_studies": 0,
+  "study_designs_summary": {"rct": 0, "cohort-prospective": 0},
+  "evidence_map": [
+    {
+      "study_id": "FirstAuthorYear",
+      "design": "rct",
+      "country": "...",
+      "n": 0,
+      "population": "...",
+      "intervention": "...",
+      "comparator": "...",
+      "primary_outcome": {"name": "...", "effect": "...", "ci_95": "..."},
+      "ocebm_level": 2,
+      "risk_of_bias": "low",
+      "key_limitations": "...",
+      "funding": "..."
+    }
+  ],
+  "consistency_assessment": {
+    "direction_of_effect": "consistent | mixed | conflicting",
+    "magnitude_consistency": "...",
+    "explanations_for_discordance": ["..."]
+  },
+  "aggregate_quality": {
+    "overall_grade_certainty": "high | moderate | low | very-low",
+    "rationale": "..."
+  },
+  "evidence_gaps": ["..."],
+  "practice_implications": {
+    "supported": ["..."],
+    "not_supported": ["..."],
+    "requires_individualization": ["..."],
+    "high_priority_research": ["..."]
+  },
+  "synthesis_confidence": "high | medium | low"
+}
+```
+
+## Síntesis de evidencia (es-ES)
+**Pregunta clínica (PICO):** ...
+
+### Mapa de evidencia
+| Estudio | Diseño | N | País | Resultado principal | OCEBM | RoB |
+|---------|--------|---|------|---------------------|-------|-----|
+| ...     | ...    |...| ...  | ...                 | ...   | ... |
+
+### Consistencia y discordancia
+**Dirección del efecto:** ... — **Magnitud:** ... — **Explicaciones de discordancia:** ...
+
+### Calidad global
+**Distribución de diseños:** ... — **RoB:** ... — **Certeza GRADE:** ... — razón
+
+### Gaps de evidencia
+- ...
+
+### Implicaciones para la práctica
+**Apoyado:** ... — **No apoyado:** ... — **Individualización:** ... — **Investigación prioritaria:** ...
+
+**Confianza de la síntesis:** alta / media / baja — razón
+
+## Rules
+- <3 studies → label "narrative summary, not synthesis"; synthesis_confidence: "low"
+- Heterogeneous studies → do not force synthesis; explain why combined inference not supported
+- Different clinical questions → ask user to narrow the set; do not invent unifying question
+- Token economy: prefer abstracts + key extracted passages, not full text of all papers
+- es-ES for narrative (with markdown table), English for JSON
+EOF
+
+echo "Wrote $OUTPUT_DIR/synthesize-collection.md"
+
 echo ""
 echo "All skills deployed. Restart Zotero to load."

@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/synthesize-collection-v1.json",
+  "title": "synthesize-collection-output",
+  "description": "Cross-paper evidence synthesis for a clinical question (working synthesis, not formal SR)",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "clinical_question",
+    "number_of_studies",
+    "consistency_assessment",
+    "aggregate_quality",
+    "synthesis_confidence"
+  ],
+  "properties": {
+    "clinical_question": {
+      "type": "string",
+      "description": "Focused clinical question being synthesized, ideally in PICO/PIO/PIRD format"
+    },
+    "number_of_studies": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of studies included in the synthesis"
+    },
+    "study_designs_summary": {
+      "type": "object",
+      "description": "Counts of studies per design type (keys are study_type values from extract-pico)",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "evidence_map": {
+      "type": "array",
+      "description": "One entry per included study",
+      "items": {
+        "type": "object",
+        "required": ["study_id", "design"],
+        "properties": {
+          "study_id": {
+            "type": "string",
+            "description": "Identifier for the study (e.g., FirstAuthorYear)"
+          },
+          "design": {
+            "type": "string",
+            "description": "Study design (matches extract-pico study_type values)"
+          },
+          "country": {"type": ["string", "null"]},
+          "year": {"type": ["integer", "null"]},
+          "n": {
+            "type": ["integer", "null"],
+            "description": "Sample size analyzed (primary analysis)"
+          },
+          "population": {"type": ["string", "null"]},
+          "intervention": {"type": ["string", "null"]},
+          "comparator": {"type": ["string", "null"]},
+          "primary_outcome": {
+            "type": ["object", "null"],
+            "properties": {
+              "name": {"type": ["string", "null"]},
+              "effect": {"type": ["string", "null"]},
+              "ci_95": {"type": ["string", "null"]},
+              "p_value": {"type": ["string", "null"]}
+            }
+          },
+          "ocebm_level": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "maximum": 5
+          },
+          "risk_of_bias": {
+            "type": ["string", "null"],
+            "description": "Summary RoB judgment (tool-specific summary, e.g., 'low' for ROB 2, 'NOS 7/9' for cohort)"
+          },
+          "key_limitations": {"type": ["string", "null"]},
+          "funding": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "consistency_assessment": {
+      "type": "object",
+      "required": ["direction_of_effect"],
+      "properties": {
+        "direction_of_effect": {
+          "type": "string",
+          "enum": ["consistent", "mixed", "conflicting"]
+        },
+        "magnitude_consistency": {
+          "type": ["string", "null"],
+          "description": "Are effect sizes broadly similar or do they vary substantially?"
+        },
+        "explanations_for_discordance": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Plausible factors explaining differences across studies (population, intervention, methodology, era, funding)"
+        }
+      }
+    },
+    "aggregate_quality": {
+      "type": "object",
+      "required": ["overall_grade_certainty"],
+      "properties": {
+        "overall_grade_certainty": {
+          "type": "string",
+          "enum": ["high", "moderate", "low", "very-low"]
+        },
+        "rationale": {
+          "type": ["string", "null"],
+          "description": "Justification for the GRADE-style certainty: starting level, downgrades, upgrades"
+        },
+        "risk_of_bias_distribution": {
+          "type": ["string", "null"],
+          "description": "Free-text summary of RoB distribution across the body of evidence"
+        }
+      }
+    },
+    "evidence_gaps": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Populations, outcomes, comparators, settings, or methodological gaps"
+    },
+    "practice_implications": {
+      "type": "object",
+      "properties": {
+        "supported": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "What the body of evidence supports doing"
+        },
+        "not_supported": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "What the body of evidence supports not doing or stopping"
+        },
+        "requires_individualization": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Decisions that depend on patient-level factors not consistently addressed"
+        },
+        "high_priority_research": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Where additional studies would most change practice"
+        }
+      }
+    },
+    "synthesis_confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Overall confidence in the synthesis output (independent of GRADE certainty of evidence)"
+    },
+    "synthesis_notes": {
+      "type": ["string", "null"],
+      "description": "Free-text notes about the synthesis process, caveats, or limitations of this output"
+    }
+  }
+}
