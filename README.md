@@ -107,10 +107,10 @@ Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compati
 - Versiones simplificadas (~50-80 líneas) para que entren en el contexto del modelo incluso con PDFs largos
 - Excluye los `examples/` y los `schema.json` formales para reducir tokens (se mantienen en el repo para Claude Code y el plugin futuro)
 
-### Uso
+### Uso en LLM-for-Zotero
 
 ```bash
-# 1. Ejecuta el script
+# 1. Ejecuta el script de despliegue
 ./deploy/flatten-for-llm-for-zotero.sh
 
 # 2. Reinicia Zotero
@@ -118,8 +118,45 @@ Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compati
 # 3. En Zotero:
 #    - Activa Agent Mode en Preferences → llm-for-zotero
 #    - Abre Standalone Window con Cmd+Shift+L (macOS) o Ctrl+Shift+L (Linux/Windows)
-#    - Selecciona el skill con / o escribe "extract pico"
+#    - Selecciona un paper o usa los triggers para activar skills
 ```
+
+### Flujo de trabajo recomendado
+
+Para análisis completo de un paper:
+
+1. **`extract-pico`** — Extrae PICO y diseño del estudio
+2. **`appraise-evidence`** — Evalúa calidad metodológica y nivel de evidencia
+3. **`clinical-relevance`** — Determina relevancia para práctica en España
+4. **`compare-guidelines`** — Compara con guías vigentes (opcional)
+
+Para síntesis de múltiples papers:
+
+1. Selecciona múltiples papers sobre la misma pregunta clínica
+2. **`synthesize-collection`** — Genera mapa de evidencia y síntesis
+
+### Limitaciones conocidas de LLM-for-Zotero
+
+- **Selección múltiple:** Zotero no permite seleccionar múltiples papers en Agent Mode. Para `synthesize-collection`, el agente puede buscar en tu biblioteca o puedes pegar abstracts adicionales.
+- **Triggers:** Si un trigger no funciona automáticamente, selecciona el skill manualmente con `/` y el nombre del skill.
+- **Contexto:** Los skills están simplificados (~50-80 líneas) para caber en el contexto junto con PDFs largos. Para análisis más detallados, usa Claude Code directamente.
+
+### Troubleshooting
+
+**Problema:** El skill no se activa automáticamente con el trigger
+- **Solución:** Selecciona el skill manualmente con `/` y el nombre (ej. `/extract-pico`)
+
+**Problema:** `synthesize-collection` modifica metadatos de Zotero
+- **Solución:** Asegúrate de haber ejecutado el script después del fix (commit `0073306`). El skill ahora tiene reglas explícitas para NO modificar metadatos.
+
+**Problema:** `compare-guidelines` devuelve guías irrelevantes (ej. guías cardiacas para TEP)
+- **Solución:** Asegúrate de haber ejecutado el script después del fix (commit `60f4599`). El skill ahora filtra por relevancia temática estricta.
+
+**Problema:** `synthesize-collection` encuentra guías en lugar de estudios originales
+- **Solución:** Asegúrate de haber ejecutado el script después del fix (commit `c088e6d`). El skill ahora filtra por tipo de ítem (solo artículos de investigación, excluye guías).
+
+**Problema:** El agente se queda atascado con abstracts truncados
+- **Solución:** Asegúrate de haber ejecutado el script después del fix (commit `5096413`). El skill ahora procede con información disponible o pide el abstract completo.
 
 ### Formato esperado (LLM-for-Zotero)
 
