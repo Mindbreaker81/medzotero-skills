@@ -51,6 +51,7 @@ Output is JSON-first (machine-readable for the future plugin), followed by a Spa
 - Filter by item type: only include original research articles (RCTs, cohort studies, case series). EXCLUDE guidelines, reviews, editorials, commentaries unless explicitly requested.
 - Limit search to the user's Zotero library — do NOT search outside sources.
 - If the search returns too many irrelevant results (e.g., treatment guidelines instead of original studies), ask the user to paste the specific papers they want synthesized or to narrow the search terms.
+- If an abstract is truncated or incomplete in Zotero, proceed with available information OR ask the user to paste the complete abstract. DO NOT hang or retry indefinitely.
 
 ### 1. Clarify the clinical question
 

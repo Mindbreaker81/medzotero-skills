@@ -249,6 +249,7 @@ Synthesize evidence across multiple papers on the same clinical question. Output
 - Filter by item type: only include original research articles (RCTs, cohort studies, case series). EXCLUDE guidelines, reviews, editorials, commentaries unless explicitly requested.
 - Limit search to the user's Zotero library — do NOT search outside sources.
 - If the search returns too many irrelevant results (e.g., treatment guidelines instead of original studies), ask the user to paste the specific papers they want synthesized or to narrow the search terms.
+- If an abstract is truncated or incomplete in Zotero, proceed with available information OR ask the user to paste the complete abstract. DO NOT hang or retry indefinitely.
 
 ## Workflow (6 steps)
 1. If only one paper selected: ask user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
