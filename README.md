@@ -11,6 +11,19 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 
 ## Skills
 
+### Especialidad
+
+Los skills están diseñados para ser **genéricos para cualquier especialidad biomédica**, con especialización neumológica como ejemplo:
+
+- **Core genérico:** `extract-pico`, `appraise-evidence`, `synthesize-collection`, y el workflow de `compare-guidelines` son aplicables a cualquier especialidad (cardiología, oncología, neurología, etc.).
+- **Especialización neumológica:** Los examples y el specialty-specific recognition en los SKILL.md están enfocados en neumología (procedimientos como EBUS, criobiopsia; condiciones como EPOC, asma, nódulos pulmonares; MCIDs neumológicos).
+- **Adaptación a otras especialidades:** Para usar en otras especialidades, adapta:
+  - **clinical-relevance:** MCIDs específicos de la especialidad, guías relevantes (ej. ESC para cardiología, NCCN/ESMO para oncología), contexto regulatorio específico.
+  - **compare-guidelines:** Mapeo de guías de la especialidad (ej. ACC/AHA para cardiología, NCCN para oncología, NICE para diversas especialidades).
+  - **Specialty-specific recognition:** Procedimientos, condiciones y outcomes específicos de la especialidad.
+
+Los skills están construidos para ser fácilmente extensibles a otras especialidades mediante modificación de estos componentes especializados.
+
 ### 1. extract-pico
 **Qué hace:** Extrae estructuradamente el diseño PICO (Población, Intervención, Comparador, Outcome) y el tipo de estudio de un paper.
 
