@@ -345,7 +345,7 @@ Compare a paper against current clinical practice guidelines (SEPAR, ATS, ERS, G
 Always state guideline version/year. Always include knowledge_cutoff_caveat in JSON and narrative. Recommend the user verify the live source. Never invent a guideline or recommendation.
 
 ## Workflow
-1. Identify relevant guidelines by topic (COPD: GOLD/GesEPOC; Asthma: GINA/GEMA; Lung cancer: IASLC/NCCN/ESMO/SEPAR; Nodules: Fleischner/BTS/Lung-RADS; ILD: ATS/ERS/JRS/ALAT; PH: ESC/ERS 2022; NTM: ATS/ERS/ESCMID/IDSA 2020; Sleep: AASM/SEPAR; Bronchoscopy: ACCP/ERS/SEPAR; CAP: ATS/IDSA/SEPAR; etc.)
+1. Identify relevant guidelines by topic (STRICT RELEVANCE ONLY — do not mix topics). COPD: GOLD/GesEPOC; Asthma: GINA/GEMA; Lung cancer: IASLC/NCCN/ESMO/SEPAR; Nodules: Fleischner/BTS/Lung-RADS; ILD: ATS/ERS/JRS/ALAT; PH: ESC/ERS 2022; NTM: ATS/ERS/ESCMID/IDSA 2020; Sleep: AASM/SEPAR; Bronchoscopy: ACCP/ERS/SEPAR; CAP: ATS/IDSA/SEPAR; VTE/PE: ESC 2019/2020, ACCP 2016, ATS 2012, SEPAR 2021 (ONLY these — NOT coronary, valvular, or AF guidelines). For cardiac topics: ESC, AHA/ACC. For valvular: ESC/EACTS. For AF: ESC, AHA/ACC/HRS.
 2. Locate specific recommendation: quote (or paraphrase, flag if paraphrased), strength, certainty, year
 3. Classify alignment per guideline: aligned / extends / refines / contradicts / premature-to-change
 4. Assess relative evidence strength: paper-stronger / paper-weaker / comparable / not-directly-comparable

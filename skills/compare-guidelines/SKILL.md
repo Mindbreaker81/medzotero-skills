@@ -42,6 +42,8 @@ The `knowledge_cutoff_caveat` field in the JSON output and the corresponding sen
 
 ### 1. Identify the relevant guideline(s) by clinical topic
 
+**CRITICAL:** Only include guidelines that are **directly relevant** to the paper's specific clinical topic. Do not include guidelines for related but different conditions (e.g., for pulmonary embolism, do NOT include guidelines for coronary artery disease, valvular disease, or atrial fibrillation). Relevance must be strict and specific.
+
 Map the paper's clinical topic to the major guidelines. The model should recall as many of the following as it confidently knows; for each, **state the version/year explicitly** in the output:
 
 - **COPD:** GOLD (annual updates), SEPAR-EPOC (GesEPOC), ERS/ATS COPD documents, NICE COPD.
@@ -59,7 +61,10 @@ Map the paper's clinical topic to the major guidelines. The model should recall 
 - **Cystic fibrosis:** CFF, ECFS.
 - **Tuberculosis:** WHO, NICE, ATS/CDC/IDSA, SEPAR-TB.
 - **Pneumonia (CAP/HAP):** ATS/IDSA, ERS/ESCMID/ALAT, BTS, SEPAR (Normativa SEPAR neumonía).
-- **VTE / pulmonary embolism:** ESC, ACCP, ATS, SEPAR.
+- **VTE / pulmonary embolism:** ESC 2019/2020 Guidelines, ACCP (CHEST) 2016, ATS 2012, SEPAR (Normativa SEPAR TEP 2021). ONLY these — do NOT include coronary syndrome, valvular disease, or atrial fibrillation guidelines.
+- **Coronary artery disease / acute coronary syndrome:** ESC, AHA/ACC — ONLY for cardiac topics, not for pulmonary embolism.
+- **Valvular heart disease:** ESC/EACTS — ONLY for valvular topics.
+- **Atrial fibrillation:** ESC, AHA/ACC/HRS — ONLY for arrhythmia topics.
 
 For topics outside this list (or where the model is uncertain about the most recent version), explicitly say so and reduce `confidence`.
 

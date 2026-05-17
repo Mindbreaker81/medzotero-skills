@@ -11,11 +11,70 @@ Construir 5 skills portables en markdown para análisis crítico de literatura b
 
 ## Skills
 
-1. **extract-pico** — Extracción estructurada PICO y tipo de estudio
-2. **appraise-evidence** — Valoración crítica (OCEBM, GRADE, ROB 2, AMSTAR-2)
-3. **clinical-relevance** — Relevancia para práctica clínica en España (SNS, AEMPS, SEPAR)
-4. **synthesize-collection** — Síntesis de evidencia multi-paper
-5. **compare-guidelines** — Comparación con guías clínicas vigentes
+### 1. extract-pico
+**Qué hace:** Extrae estructuradamente el diseño PICO (Población, Intervención, Comparador, Outcome) y el tipo de estudio de un paper.
+
+**Cuándo usarlo:**
+- Para obtener un resumen estructurado rápido de un artículo
+- Para identificar el diseño metodológico (RCT, cohorte, caso-control, etc.)
+- Para extraer los endpoints primarios y secundarios
+- Para entender la población estudiada y los criterios de inclusión/exclusión
+
+**Triggers:** `extract pico`, `summarize`, `analyze`, `what's the design`
+
+---
+
+### 2. appraise-evidence
+**Qué hace:** Evalúa la calidad metodológica y el nivel de evidencia de un paper usando herramientas estandarizadas (ROB 2 para RCTs, AMSTAR-2 para revisiones, NOS para estudios observacionales, QUADAS-2 para pruebas diagnósticas, PROBAST para modelos predictivos, AGREE II para guías, ROBINS-I para estudios no aleatorizados, GRADE para fuerza de recomendación, OCEBM para nivel de evidencia).
+
+**Cuándo usarlo:**
+- Para evaluar la validez interna de un estudio
+- Para identificar sesgos potenciales (selección, desempeño, detección, atrición, reporte)
+- Para determinar la fuerza de la evidencia (alta, moderada, baja, muy baja)
+- Para decidir si confiar en los resultados antes de aplicarlos a la práctica
+
+**Triggers:** `appraise`, `critical appraisal`, `risk of bias`, `level of evidence`, `grade`, `should i trust`, `is this study good`
+
+---
+
+### 3. clinical-relevance
+**Qué hace:** Evalúa la relevancia clínica del paper para la práctica en España, considerando: significancia clínica (MCIDs neumológicos), aplicabilidad al contexto español (SNS, AEMPS, SEPAR), tamaño de efecto, NNT/NNH, coste-efectividad, y recomendaciones prácticas.
+
+**Cuándo usarlo:**
+- Para decidir si cambiar tu práctica basándote en un paper
+- Para evaluar si los resultados son clínicamente significativos (no solo estadísticamente)
+- Para entender la aplicabilidad en el sistema de salud español
+- Para identificar barreras de implementación (coste, disponibilidad, formación)
+
+**Triggers:** `clinical relevance`, `practice changing`, `change my practice`, `applicable to my patients`, `should i act`, `relevancia clínica`
+
+---
+
+### 4. synthesize-collection
+**Qué hace:** Sintetiza evidencia de múltiples papers sobre la misma pregunta clínica. Genera un mapa de evidencia, evalúa consistencia entre estudios, calcula GRADE agregado, identifica gaps de evidencia, y deriva implicaciones para la práctica.
+
+**Cuándo usarlo:**
+- Cuando tienes varios papers sobre la misma pregunta clínica
+- Para entender el panorama completo de la evidencia
+- Para identificar inconsistencias o heterogeneidad entre estudios
+- Para determinar si la evidencia es suficientemente robusta para cambiar la práctica
+- Para identificar áreas donde falta investigación
+
+**Triggers:** `synthesize collection`, `evidence synthesis`, `what does the evidence say`, `summarize my collection`, `evidence gaps`, `síntesis de evidencia`
+
+---
+
+### 5. compare-guidelines
+**Qué hace:** Compara un paper contra guías clínicas vigentes (SEPAR, ATS, ERS, GOLD, GINA, IASLC, NICE, AASM, etc.). Determina si el paper se alinea, extiende, refina, contradice o es prematuro para cambiar las recomendaciones actuales. Incluye un caveat obligatorio sobre el cutoff de conocimiento del modelo.
+
+**Cuándo usarlo:**
+- Para entender cómo un paper se relaciona con la práctica recomendada
+- Para saber si un estudio contradice guías establecidas
+- Para evaluar si un paper justifica actualizar una recomendación
+- Para identificar qué guías son relevantes a un tema específico
+- Para saber si un hallazgo es consistente con SEPAR/ATS/ERS/GOLD/GINA
+
+**Triggers:** `compare guidelines`, `what do guidelines say`, `does this contradict`, `should guidelines change`, `consistent with separ/ats/ers/gold/gina`, `comparar con guías`
 
 ## Estado
 
