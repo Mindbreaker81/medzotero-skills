@@ -6,7 +6,7 @@ Kit de skills médicos para investigación biomédica en Zotero, especializado e
 
 ## Propósito
 
-Construir 5 skills portables en markdown para análisis crítico de literatura biomédica, compatibles con:
+Este repositorio incluye 5 skills portables en markdown para análisis crítico de literatura biomédica, compatibles con:
 - Claude Code
 - LLM-for-Zotero
 - Codex CLI
@@ -91,17 +91,19 @@ Los skills están construidos para ser fácilmente extensibles a otras especiali
 
 **Triggers:** `compare guidelines`, `what do guidelines say`, `does this contradict`, `should guidelines change`, `consistent with separ/ats/ers/gold/gina`, `comparar con guías`
 
-## Estado
+## Contenido del repositorio
 
-✅ Fase 1 completa: 5 skills implementados. Ver `docs/medzotero-skills-plan.md` para el plan detallado y los criterios go/no-go para la Fase 2 (plugin).
+Cada skill vive en `skills/<nombre>/` con `SKILL.md`, `schema.json` y 2 ejemplos sintéticos en `examples/`:
 
-### Estado actual
+| Skill | Contenido |
+|-------|-----------|
+| `extract-pico` | Extracción PICO y tipo de estudio |
+| `appraise-evidence` | Cribado crítico (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM) |
+| `clinical-relevance` | Relevancia clínica en España (AEMPS/SNS/SEPAR, MCIDs neumológicos) |
+| `synthesize-collection` | Síntesis multi-paper (mapa de evidencia, consistencia, GRADE agregado, gaps) |
+| `compare-guidelines` | Comparación con guías (SEPAR, ATS, ERS, GOLD, GINA, IASLC, NICE, AASM…) y caveat de cutoff |
 
-- ✅ `extract-pico` — SKILL.md, schema.json y 2 ejemplos sintéticos
-- ✅ `appraise-evidence` — SKILL.md, schema.json y 2 ejemplos sintéticos (ROB 2, AMSTAR-2, NOS, QUADAS-2, PROBAST, AGREE II, ROBINS-I, GRADE, OCEBM)
-- ✅ `clinical-relevance` — SKILL.md, schema.json, 2 ejemplos sintéticos, contexto AEMPS/SNS/SEPAR + MCIDs neumológicos
-- ✅ `synthesize-collection` — SKILL.md, schema.json, 2 ejemplos sintéticos (mapa de evidencia, consistencia, GRADE agregado, gaps, implicaciones para la práctica)
-- ✅ `compare-guidelines` — SKILL.md, schema.json, 2 ejemplos sintéticos, mapeo de guías mayores (SEPAR, ATS, ERS, GOLD, GINA, IASLC, NICE, AASM…) con caveat obligatorio de cutoff de entrenamiento
+También incluye el script `deploy/flatten-for-llm-for-zotero.sh` para desplegar versiones compactas en LLM-for-Zotero.
 
 ## Despliegue en LLM-for-Zotero
 
@@ -120,7 +122,7 @@ Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compati
   - `compare-guidelines.md` — disparadores: `compare guidelines`, `what do guidelines say`, `does this contradict`, `should guidelines change`, `consistent with separ/ats/ers/gold/gina`, `comparar con guías`
 - Cada skill incluye frontmatter LLM-for-Zotero (`id` + `match` patterns)
 - Versiones simplificadas (~50-80 líneas) para que entren en el contexto del modelo incluso con PDFs largos
-- Excluye los `examples/` y los `schema.json` formales para reducir tokens (se mantienen en el repo para Claude Code y el plugin futuro)
+- Excluye los `examples/` y los `schema.json` formales para reducir tokens (permanecen en el repo para Claude Code y análisis detallado)
 
 ### Uso en LLM-for-Zotero
 

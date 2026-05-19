@@ -38,9 +38,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Specialty context: Interventional pulmonology with Spain/SEPAR/AEMPS focus
 - MCIDs included for pulmonary outcomes (6MWD, FEV1, mMRC, CAT, SGRQ, K-BILD)
 
-## [Unreleased]
-
-### Planned
-- Phase 2: Zotero plugin development (see `docs/medzotero-skills-plan.md` for go/no-go criteria)
-
 [1.0.0]: https://github.com/Mindbreaker81/medzotero-skills/releases/tag/v1.0.0
