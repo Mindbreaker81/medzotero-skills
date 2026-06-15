@@ -3,7 +3,7 @@
   "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/compare-guidelines/schema.json",
   "title": "compare-guidelines-output",
   "description": "Comparison of a biomedical paper (or set of papers) against current clinical practice guidelines",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
   "additionalProperties": false,
   "required": [

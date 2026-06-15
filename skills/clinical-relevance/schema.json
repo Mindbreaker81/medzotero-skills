@@ -3,7 +3,7 @@
   "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/clinical-relevance/schema.json",
   "title": "clinical-relevance-output",
   "description": "Clinical relevance assessment of a biomedical paper for Spanish pulmonology practice",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["practice_changing", "confidence_in_judgment"],

@@ -3,7 +3,7 @@
   "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/appraise-evidence/schema.json",
   "title": "appraise-evidence-output",
   "description": "Critical appraisal of a biomedical paper with OCEBM, GRADE and study-type-specific risk-of-bias tool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["study_type_resolved", "appraisal_applicable", "appraisal_confidence"],

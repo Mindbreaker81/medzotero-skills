@@ -5,7 +5,7 @@ All notable changes to medzotero-skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-06-15
 
 ### Changed
 - **Despliegue LLM-for-Zotero ahora con fuente única de verdad.** `deploy/flatten-for-llm-for-zotero.sh` se reescribió como un script genérico que deriva cada archivo Zotero desde su `SKILL.md` (`id` ← `name`, `match` ← lista `zotero_match:` del frontmatter, cuerpo ← bloque `<!-- ZOTERO:START/END -->`), en lugar de mantener copias duplicadas dentro del propio script. Elimina el riesgo de divergencia (drift) entre las dos representaciones. La salida generada es idéntica a la anterior.
@@ -61,5 +61,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Specialty context: Interventional pulmonology with Spain/SEPAR/AEMPS focus
 - MCIDs included for pulmonary outcomes (6MWD, FEV1, mMRC, CAT, SGRQ, K-BILD)
 
-[Unreleased]: https://github.com/Mindbreaker81/medzotero-skills/compare/v1.0.0...HEAD
+[1.1.0]: https://github.com/Mindbreaker81/medzotero-skills/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Mindbreaker81/medzotero-skills/releases/tag/v1.0.0

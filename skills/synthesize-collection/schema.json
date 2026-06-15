@@ -3,7 +3,7 @@
   "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/synthesize-collection/schema.json",
   "title": "synthesize-collection-output",
   "description": "Cross-paper evidence synthesis for a clinical question (working synthesis, not formal SR)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
   "additionalProperties": false,
   "required": [

@@ -4,7 +4,7 @@
 
 Kit de skills médicos para investigación biomédica en Zotero, especializado en neumología.
 
-**Versión:** 1.0.0 — consulta el [CHANGELOG](CHANGELOG.md) para el detalle de cambios (incluidos los cambios sin publicar).
+**Versión:** 1.1.0 — consulta el [CHANGELOG](CHANGELOG.md) para el detalle de cambios.
 
 ## Propósito
 

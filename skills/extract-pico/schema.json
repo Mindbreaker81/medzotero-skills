@@ -3,7 +3,7 @@
   "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/extract-pico/schema.json",
   "title": "extract-pico-output",
   "description": "Structured extraction of study type and PICO (or variant) from a biomedical paper",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
   "additionalProperties": false,
   "required": ["study_type", "pico_applicable", "extraction_confidence"],
