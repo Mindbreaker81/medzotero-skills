@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/synthesize-collection-v1.json",
+  "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/synthesize-collection/schema.json",
   "title": "synthesize-collection-output",
   "description": "Cross-paper evidence synthesis for a clinical question (working synthesis, not formal SR)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "clinical_question",
     "number_of_studies",
@@ -32,6 +33,7 @@
       "description": "One entry per included study",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["study_id", "design"],
         "properties": {
           "study_id": {
@@ -53,6 +55,7 @@
           "comparator": {"type": ["string", "null"]},
           "primary_outcome": {
             "type": ["object", "null"],
+            "additionalProperties": false,
             "properties": {
               "name": {"type": ["string", "null"]},
               "effect": {"type": ["string", "null"]},
@@ -76,6 +79,7 @@
     },
     "consistency_assessment": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["direction_of_effect"],
       "properties": {
         "direction_of_effect": {
@@ -95,6 +99,7 @@
     },
     "aggregate_quality": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["overall_grade_certainty"],
       "properties": {
         "overall_grade_certainty": {
@@ -118,6 +123,7 @@
     },
     "practice_implications": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "supported": {
           "type": "array",

@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/appraise-evidence-v1.json",
+  "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/appraise-evidence/schema.json",
   "title": "appraise-evidence-output",
   "description": "Critical appraisal of a biomedical paper with OCEBM, GRADE and study-type-specific risk-of-bias tool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
+  "additionalProperties": false,
   "required": ["study_type_resolved", "appraisal_applicable", "appraisal_confidence"],
   "properties": {
     "study_type_resolved": {
@@ -19,7 +20,7 @@
     },
     "ocebm_question_type": {
       "type": ["string", "null"],
-      "enum": ["therapy", "diagnosis", "prognosis", "harm", "screening", "etiology", "economic"]
+      "enum": ["therapy", "diagnosis", "prognosis", "harm", "screening", "etiology", "economic", null]
     },
     "appraisal_tool": {
       "type": ["string", "null"],
@@ -31,6 +32,7 @@
     },
     "rob_2": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "Cochrane Risk of Bias 2.0 (for RCTs)",
       "properties": {
         "domain_1_randomization": {"$ref": "#/$defs/rob2Domain"},
@@ -43,12 +45,14 @@
     },
     "amstar_2": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "AMSTAR-2 (for systematic reviews)",
       "properties": {
         "items": {
           "type": "array",
           "items": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
               "item_number": {"type": "integer"},
               "item_description": {"type": "string"},
@@ -63,18 +67,32 @@
     },
     "nos": {
       "type": ["object", "null"],
-      "description": "Newcastle-Ottawa Scale (for cohort or case-control)",
+      "additionalProperties": false,
+      "description": "Newcastle-Ottawa Scale (for cohort or case-control). Item-level: each domain is a map of NOS item name to {score, rationale}. Use `outcome` for cohorts and `exposure` for case-control studies.",
+      "required": ["version", "selection", "comparability", "total_stars", "max_stars"],
+      "allOf": [
+        {
+          "if": {"properties": {"version": {"const": "cohort"}}, "required": ["version"]},
+          "then": {"required": ["outcome"], "not": {"required": ["exposure"]}}
+        },
+        {
+          "if": {"properties": {"version": {"const": "case-control"}}, "required": ["version"]},
+          "then": {"required": ["exposure"], "not": {"required": ["outcome"]}}
+        }
+      ],
       "properties": {
         "version": {"type": "string", "enum": ["cohort", "case-control"]},
-        "selection_stars": {"type": "integer", "minimum": 0, "maximum": 4},
-        "comparability_stars": {"type": "integer", "minimum": 0, "maximum": 2},
-        "outcome_or_exposure_stars": {"type": "integer", "minimum": 0, "maximum": 3},
+        "selection": {"type": "object", "additionalProperties": {"$ref": "#/$defs/nosItem"}},
+        "comparability": {"type": "object", "additionalProperties": {"$ref": "#/$defs/nosItem"}},
+        "outcome": {"type": "object", "additionalProperties": {"$ref": "#/$defs/nosItem"}},
+        "exposure": {"type": "object", "additionalProperties": {"$ref": "#/$defs/nosItem"}},
         "total_stars": {"type": "integer", "minimum": 0, "maximum": 9},
-        "domain_rationales": {"type": "object"}
+        "max_stars": {"type": "integer", "minimum": 0, "maximum": 9}
       }
     },
     "quadas_2": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "QUADAS-2 (for diagnostic accuracy studies)",
       "properties": {
         "patient_selection": {"$ref": "#/$defs/quadasDomain"},
@@ -85,6 +103,7 @@
     },
     "probast": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "PROBAST (for prognostic models)",
       "properties": {
         "participants": {"$ref": "#/$defs/probastDomain"},
@@ -96,6 +115,7 @@
     },
     "agree_ii": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "AGREE II (for clinical practice guidelines)",
       "properties": {
         "scope_and_purpose": {"type": "number"},
@@ -109,6 +129,7 @@
     },
     "robins_i": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "ROBINS-I (for non-randomized intervention studies)",
       "properties": {
         "confounding": {"$ref": "#/$defs/robinsDomain"},
@@ -123,6 +144,7 @@
     },
     "grade_assessment": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "properties": {
         "outcome": {"type": "string"},
         "starting_certainty": {"type": "string", "enum": ["high", "low"]},
@@ -130,6 +152,7 @@
           "type": "array",
           "items": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
               "reason": {"type": "string", "enum": ["risk-of-bias", "inconsistency", "indirectness", "imprecision", "publication-bias"]},
               "magnitude": {"type": "integer", "minimum": 1, "maximum": 2},
@@ -141,6 +164,7 @@
           "type": "array",
           "items": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
               "reason": {"type": "string", "enum": ["large-effect", "dose-response", "plausible-confounding-reduces-effect"]},
               "magnitude": {"type": "integer", "minimum": 1, "maximum": 2},
@@ -168,13 +192,24 @@
   "$defs": {
     "rob2Domain": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "judgment": {"type": "string", "enum": ["low", "some-concerns", "high", "no-information"]},
         "rationale": {"type": "string"}
       }
     },
+    "nosItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "rationale"],
+      "properties": {
+        "score": {"type": "integer", "minimum": 0, "maximum": 2},
+        "rationale": {"type": "string"}
+      }
+    },
     "quadasDomain": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "risk_of_bias": {"type": "string", "enum": ["low", "high", "unclear"]},
         "applicability": {"type": "string", "enum": ["low", "high", "unclear"]},
@@ -183,6 +218,7 @@
     },
     "quadasDomainFlowOnly": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "risk_of_bias": {"type": "string", "enum": ["low", "high", "unclear"]},
         "rationale": {"type": "string"}
@@ -190,6 +226,7 @@
     },
     "probastDomain": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "risk_of_bias": {"type": "string", "enum": ["low", "high", "unclear"]},
         "applicability": {"type": "string", "enum": ["low", "high", "unclear"]},
@@ -198,6 +235,7 @@
     },
     "robinsDomain": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "judgment": {"type": "string", "enum": ["low", "moderate", "serious", "critical", "no-information"]},
         "rationale": {"type": "string"}

@@ -1,6 +1,18 @@
 ---
 name: compare-guidelines
 description: Compare a paper or set of papers against current clinical practice guidelines from major pulmonology societies (SEPAR, ATS, ERS, BTS, CHEST, GOLD, GINA, IASLC, ESMO, NICE, AASM, etc.). Determines whether the paper aligns with, extends, refines, contradicts current guideline recommendations, or is premature to change them; identifies specific guideline statements affected; and assesses the strength of evidence in the paper relative to the strength of the current recommendation. Use when the user asks "what do guidelines say about this", "does this contradict current practice", "should guidelines change", "is this consistent with SEPAR/ATS/ERS/GOLD/GINA", "comparar con guías", or any query involving guideline context for a paper.
+zotero_match:
+  - /compare guidelines/i
+  - /what do guidelines say/i
+  - /does this contradict/i
+  - /should guidelines change/i
+  - /consistent with separ/i
+  - /consistent with ats/i
+  - /consistent with ers/i
+  - /consistent with gold/i
+  - /consistent with gina/i
+  - /comparar con guías/i
+  - /comparar con guias/i
 ---
 
 # Compare Guidelines
@@ -144,7 +156,7 @@ See `schema.json` in this skill folder for the formal JSON schema. Key top-level
       "guideline_url": "..."
     }
   ],
-  "overall_alignment": "aligned | extends | refines | contradicts | premature-to-change | mixed",
+  "overall_alignment": "aligned | extends | refines | contradicts | premature-to-change | mixed | no-relevant-guideline",
   "relative_evidence_strength": "paper-stronger | paper-weaker | comparable | not-directly-comparable",
   "recommended_action": "continue-current-practice | monitor-for-guideline-update | discuss-in-mdd | wait-for-replication | consider-individualized-change",
   "recommended_action_rationale": "...",
@@ -206,3 +218,84 @@ See `examples/aligned-guideline-example.md` and `examples/contradicts-guideline-
 ## Output language
 
 Respond in es-ES for the narrative section. JSON remains in English (field names and enum values follow English-language conventions). Within JSON string values, **preserve guideline statements in their original language** with a Spanish translation if helpful (especially for SEPAR Spanish text and ATS/ERS/GOLD English text).
+
+<!-- Condensed variant for LLM-for-Zotero Agent Mode. `deploy/flatten-for-llm-for-zotero.sh`
+     emits everything between ZOTERO:START and ZOTERO:END verbatim (plus id/match frontmatter
+     built from `zotero_match` above) to ~/Zotero/llm-for-zotero/skills/.
+     Keep it in sync with the full skill when editing. -->
+<!-- ZOTERO:START -->
+# Compare Guidelines
+
+Compare a paper against current clinical practice guidelines (SEPAR, ATS, ERS, GOLD, GINA, IASLC, ESMO, NICE, AASM, etc.). Output JSON first, then Spanish narrative.
+
+## Critical: knowledge cutoff caveat
+Always state guideline version/year. Always include knowledge_cutoff_caveat in JSON and narrative. Recommend the user verify the live source. Never invent a guideline or recommendation.
+
+## Workflow
+1. Identify relevant guidelines by topic (STRICT RELEVANCE ONLY — do not mix topics). COPD: GOLD/GesEPOC; Asthma: GINA/GEMA; Lung cancer: IASLC/NCCN/ESMO/SEPAR; Nodules: Fleischner/BTS/Lung-RADS; ILD: ATS/ERS/JRS/ALAT; PH: ESC/ERS 2022; NTM: ATS/ERS/ESCMID/IDSA 2020; Sleep: AASM/SEPAR; Bronchoscopy: ACCP/ERS/SEPAR; CAP: ATS/IDSA/SEPAR; VTE/PE: ESC 2019/2020, ACCP 2016, ATS 2012, SEPAR 2021 (ONLY these — NOT coronary, valvular, or AF guidelines). For cardiac topics: ESC, AHA/ACC. For valvular: ESC/EACTS. For AF: ESC, AHA/ACC/HRS.
+2. Locate specific recommendation: quote (or paraphrase, flag if paraphrased), strength, certainty, year
+3. Classify alignment per guideline: aligned / extends / refines / contradicts / premature-to-change
+4. Assess relative evidence strength: paper-stronger / paper-weaker / comparable / not-directly-comparable
+5. Recommend action: continue-current-practice / monitor-for-guideline-update / discuss-in-mdd / wait-for-replication / consider-individualized-change
+6. Always include knowledge_cutoff_caveat
+
+## Output Schema (JSON first)
+
+```json
+{
+  "clinical_topic": "...",
+  "paper_summary_for_comparison": "...",
+  "relevant_guidelines": [
+    {
+      "society": "SEPAR",
+      "title": "...",
+      "year": 2023,
+      "version": "...",
+      "specific_recommendation_quoted": "...",
+      "recommendation_is_paraphrased": false,
+      "recommendation_strength": "strong | conditional | weak | not-stated",
+      "evidence_certainty_in_guideline": "high | moderate | low | very-low | not-stated",
+      "alignment": "aligned | extends | refines | contradicts | premature-to-change",
+      "rationale": "...",
+      "guideline_url": "..."
+    }
+  ],
+  "overall_alignment": "aligned | extends | refines | contradicts | premature-to-change | mixed | no-relevant-guideline",
+  "relative_evidence_strength": "paper-stronger | paper-weaker | comparable | not-directly-comparable",
+  "recommended_action": "continue-current-practice | monitor-for-guideline-update | discuss-in-mdd | wait-for-replication | consider-individualized-change",
+  "recommended_action_rationale": "...",
+  "knowledge_cutoff_caveat": "Las guías pueden haber sido actualizadas desde el entrenamiento del modelo. Verifique en [URL].",
+  "confidence": "high | medium | low",
+  "comparison_notes": "..."
+}
+```
+
+## Comparación con guías clínicas (es-ES)
+**Tema clínico:** ...
+**Resumen del paper para la comparación:** ...
+
+### Guías relevantes
+- **[Sociedad, año, versión]** — Recomendación: "..." (fuerza: ...; certeza: ...). **Alineación:** ...
+  - Razón: ...
+  - URL: ...
+
+### Fuerza relativa de la evidencia
+**Paper vs guía:** ... — razón
+
+### Acción recomendada
+... — razón
+
+### Caveat sobre actualización de guías
+Las recomendaciones citadas reflejan el conocimiento del modelo en el momento de su entrenamiento. **Verifique la versión vigente en [URL/sociedad].**
+
+**Confianza de la comparación:** alta / media / baja — razón
+
+## Rules
+- Always include knowledge_cutoff_caveat (mandatory)
+- Single small study + high RoB → alignment: "premature-to-change" regardless of effect direction
+- Multiple guidelines disagreeing → present each separately; overall_alignment: "mixed"
+- Topic not covered by any guideline → relevant_guidelines: []; comparison_notes: "no major guideline covers this topic to the model's knowledge"
+- If quoting is approximate → set recommendation_is_paraphrased: true; warn user to verify exact text
+- Cite SEPAR alongside international guidelines for Spanish context when applicable
+- es-ES for narrative, English for JSON; preserve original-language guideline text
+<!-- ZOTERO:END -->

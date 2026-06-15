@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/extract-pico-v1.json",
+  "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/extract-pico/schema.json",
   "title": "extract-pico-output",
   "description": "Structured extraction of study type and PICO (or variant) from a biomedical paper",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
+  "additionalProperties": false,
   "required": ["study_type", "pico_applicable", "extraction_confidence"],
   "properties": {
     "study_type": {
@@ -46,10 +47,12 @@
     },
     "pico": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "description": "PICO or variant extraction (null if pico_applicable is false)",
       "properties": {
         "population": {
           "type": ["object", "null"],
+          "additionalProperties": false,
           "properties": {
             "description": {"type": ["string", "null"]},
             "key_inclusion_criteria": {
@@ -66,6 +69,7 @@
         },
         "intervention": {
           "type": ["object", "null"],
+          "additionalProperties": false,
           "properties": {
             "description": {"type": ["string", "null"]},
             "dose_or_intensity": {"type": ["string", "null"]},
@@ -74,6 +78,7 @@
         },
         "comparison": {
           "type": ["object", "null"],
+          "additionalProperties": false,
           "properties": {
             "description": {"type": ["string", "null"]},
             "type": {
@@ -84,11 +89,13 @@
         },
         "outcomes": {
           "type": ["object", "null"],
+          "additionalProperties": false,
           "properties": {
             "primary": {
               "type": "array",
               "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                   "name": {"type": "string"},
                   "measurement": {"type": ["string", "null"]},
@@ -102,6 +109,7 @@
               "type": "array",
               "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                   "name": {"type": "string"},
                   "measurement": {"type": ["string", "null"]},
@@ -115,6 +123,7 @@
               "type": "array",
               "items": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
                   "name": {"type": "string"},
                   "effect": {"type": ["string", "null"]},
@@ -129,6 +138,7 @@
     },
     "sample_size": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "screened": {"type": ["integer", "null"]},
         "enrolled": {"type": ["integer", "null"]},
@@ -142,6 +152,7 @@
     },
     "duration": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "enrollment_period": {"type": ["string", "null"]},
         "follow_up_median": {"type": ["string", "null"]},
@@ -158,6 +169,7 @@
     },
     "registration": {
       "type": ["object", "null"],
+      "additionalProperties": false,
       "properties": {
         "id": {"type": ["string", "null"]},
         "registry": {"type": ["string", "null"]}

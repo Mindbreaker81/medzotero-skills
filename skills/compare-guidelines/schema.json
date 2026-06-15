@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Mindbreaker81/medzotero-skills/schemas/compare-guidelines-v1.json",
+  "$id": "https://raw.githubusercontent.com/Mindbreaker81/medzotero-skills/main/skills/compare-guidelines/schema.json",
   "title": "compare-guidelines-output",
   "description": "Comparison of a biomedical paper (or set of papers) against current clinical practice guidelines",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "clinical_topic",
     "relevant_guidelines",
@@ -26,6 +27,7 @@
       "description": "Each guideline relevant to the paper's topic. Empty array if no major guideline covers the topic.",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["society", "alignment"],
         "properties": {
           "society": {

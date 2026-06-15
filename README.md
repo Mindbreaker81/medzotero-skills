@@ -4,6 +4,8 @@
 
 Kit de skills médicos para investigación biomédica en Zotero, especializado en neumología.
 
+**Versión:** 1.1.0 — consulta el [CHANGELOG](CHANGELOG.md) para el detalle de cambios.
+
 ## Propósito
 
 Este repositorio incluye 5 skills portables en markdown para análisis crítico de literatura biomédica, compatibles con:
@@ -111,7 +113,13 @@ LLM-for-Zotero usa un formato de skill diferente al de Claude Code: requiere `id
 
 ### Script `deploy/flatten-for-llm-for-zotero.sh`
 
-Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compatibles con LLM-for-Zotero Agent Mode. Características:
+Convierte los `SKILL.md` (formato Claude Code) a versiones ultra-minimal compatibles con LLM-for-Zotero Agent Mode. El script **deriva cada archivo desde su `SKILL.md`** (fuente única de verdad), por lo que no hay copias duplicadas que mantener:
+
+- `id` ← el campo `name` del frontmatter del `SKILL.md`
+- `match` ← cada patrón de la lista `zotero_match:` del frontmatter
+- cuerpo ← el texto entre los marcadores `<!-- ZOTERO:START -->` y `<!-- ZOTERO:END -->`
+
+Características:
 
 - Genera un `.md` por skill en `${ZOTERO_DATA_DIR:-$HOME/Zotero}/llm-for-zotero/skills/`
 - Skills desplegados:
@@ -188,7 +196,12 @@ match: /summarize/i
 
 ### Personalización
 
-Si necesitas modificar el contenido del skill desplegado, edita el `cat > ... << 'EOF'` dentro del script. Si quieres incluir los `examples/`, descomenta las líneas relevantes (puede causar errores "Agent stopped" con PDFs largos).
+El contenido desplegado se edita en el propio `SKILL.md`, no en el script:
+
+- **Triggers (patrones `match`):** edita la lista `zotero_match:` del frontmatter del `SKILL.md`.
+- **Cuerpo del skill desplegado:** edita el bloque entre `<!-- ZOTERO:START -->` y `<!-- ZOTERO:END -->` del `SKILL.md`.
+
+Tras editar, vuelve a ejecutar `./deploy/flatten-for-llm-for-zotero.sh`. El script `deploy/flatten-for-llm-for-zotero.sh` es genérico y no contiene texto de skills, así que **no debe editarse para cambiar contenido**.
 
 ## Uso en Claude Code
 
@@ -286,6 +299,21 @@ Si encuentras papers que serían buenos ejemplos adicionales, crea un archivo en
 1. Paper metadata (synthetic o real)
 2. JSON output completo
 3. Narrativa en español
+
+## Calidad y tests
+
+El directorio `eval/` contiene comprobaciones automáticas que corren en CI (GitHub Actions, `.github/workflows/ci.yml`) en cada push y pull request:
+
+- **`validate_examples.py`** — valida cada bloque JSON de los `examples/` contra el `schema.json` del skill (JSON Schema draft 2020-12). Detecta desajustes entre la salida documentada y el schema.
+- **`test_deploy.sh`** — ejecuta el script de despliegue en un directorio temporal y verifica que cada archivo generado para Zotero está bien formado (frontmatter `id`/`match`, cuerpo no vacío).
+- **ShellCheck** — análisis estático de los scripts bash.
+
+Ejecutar localmente:
+
+```bash
+pip install -r eval/requirements.txt
+python3 eval/validate_examples.py && bash eval/test_deploy.sh
+```
 
 ## Licencia
 

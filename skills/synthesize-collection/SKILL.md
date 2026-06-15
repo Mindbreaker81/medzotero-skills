@@ -1,6 +1,13 @@
 ---
 name: synthesize-collection
 description: Synthesize evidence across multiple biomedical papers (e.g., a Zotero collection or a set of papers on the same clinical question). Produces an evidence map, consistency assessment across studies, aggregated quality summary, identification of evidence gaps, and practice implications. Use when the user has multiple papers on the same topic and asks for a synthesis, evidence summary, "what does the evidence say about X", "summarize my collection on Y", "where are the gaps in evidence", "síntesis de evidencia", or anything implying cross-paper synthesis.
+zotero_match:
+  - /synthesize collection/i
+  - /evidence synthesis/i
+  - /what does the evidence say/i
+  - /summarize my collection/i
+  - /evidence gaps/i
+  - /síntesis de evidencia/i
 ---
 
 # Synthesize Collection
@@ -230,3 +237,111 @@ See `examples/synthesis-consistent-evidence-example.md` and `examples/synthesis-
 ## Output language
 
 Respond in es-ES for the narrative section. JSON remains in English (field names and enum values follow English-language conventions). Within JSON string values, preserve original-language terms when they appear in the source papers (e.g., scale names, technology platforms).
+
+<!-- Condensed variant for LLM-for-Zotero Agent Mode. `deploy/flatten-for-llm-for-zotero.sh`
+     emits everything between ZOTERO:START and ZOTERO:END verbatim (plus id/match frontmatter
+     built from `zotero_match` above) to ~/Zotero/llm-for-zotero/skills/.
+     Keep it in sync with the full skill when editing. -->
+<!-- ZOTERO:START -->
+# Synthesize Collection
+
+Synthesize evidence across multiple papers on the same clinical question. Output JSON first, then Spanish narrative with markdown evidence map table.
+
+## Inputs
+- Multiple papers (Zotero collection, selection, or pasted abstracts).
+- Optional: focused clinical question. If absent, infer and confirm in PICO format before synthesizing.
+
+## CRITICAL: Do NOT modify Zotero metadata
+- NEVER modify title, authors, journal, year, or any Zotero item metadata.
+- ONLY read and analyze papers for synthesis.
+- If you need to find related papers, use Zotero search but DO NOT modify any item.
+
+## When searching Zotero collection for related papers:
+- Use SPECIFIC search terms from the selected paper: title keywords, first author, year, journal.
+- Search for the specific clinical question/intervention/comparator (e.g., "azithromycin bronchiectasis BAT EMBRACE").
+- Filter by item type: only include original research articles (RCTs, cohort studies, case series). EXCLUDE guidelines, reviews, editorials, commentaries unless explicitly requested.
+- Limit search to the user's Zotero library — do NOT search outside sources.
+- If the search returns too many irrelevant results (e.g., treatment guidelines instead of original studies), ask the user to paste the specific papers they want synthesized or to narrow the search terms.
+- If an abstract is truncated or incomplete in Zotero, proceed with available information OR ask the user to paste the complete abstract. DO NOT hang or retry indefinitely.
+
+## Workflow (7 steps)
+1. If only one paper selected: ask user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
+2. Clarify clinical question (PICO / PIO / PIRD). If papers span different questions, ask user to narrow the set.
+3. Build evidence map: one row per study with study_id, design, country, n, population, intervention, comparator, primary_outcome (name/effect/ci_95), ocebm_level, risk_of_bias, key_limitations, funding.
+4. Assess consistency: direction_of_effect (consistent/mixed/conflicting), magnitude_consistency, explanations_for_discordance (population, intervention, methodology, era, funding).
+5. Aggregate quality: study designs distribution, RoB distribution, GRADE certainty for primary outcome (start High for RCT body / Low for observational; downgrade for risk-of-bias, inconsistency, indirectness, imprecision, publication-bias).
+6. Identify evidence gaps: populations underrepresented, outcomes not studied, comparators not tested, settings not studied, methodological gaps.
+7. Practice implications: supported / not_supported / requires_individualization / high_priority_research.
+
+## Output Schema (JSON first)
+
+```json
+{
+  "clinical_question": "...",
+  "number_of_studies": 0,
+  "study_designs_summary": {"rct": 0, "cohort-prospective": 0},
+  "evidence_map": [
+    {
+      "study_id": "FirstAuthorYear",
+      "design": "rct",
+      "country": "...",
+      "n": 0,
+      "population": "...",
+      "intervention": "...",
+      "comparator": "...",
+      "primary_outcome": {"name": "...", "effect": "...", "ci_95": "..."},
+      "ocebm_level": 2,
+      "risk_of_bias": "low",
+      "key_limitations": "...",
+      "funding": "..."
+    }
+  ],
+  "consistency_assessment": {
+    "direction_of_effect": "consistent | mixed | conflicting",
+    "magnitude_consistency": "...",
+    "explanations_for_discordance": ["..."]
+  },
+  "aggregate_quality": {
+    "overall_grade_certainty": "high | moderate | low | very-low",
+    "rationale": "..."
+  },
+  "evidence_gaps": ["..."],
+  "practice_implications": {
+    "supported": ["..."],
+    "not_supported": ["..."],
+    "requires_individualization": ["..."],
+    "high_priority_research": ["..."]
+  },
+  "synthesis_confidence": "high | medium | low"
+}
+```
+
+## Síntesis de evidencia (es-ES)
+**Pregunta clínica (PICO):** ...
+
+### Mapa de evidencia
+| Estudio | Diseño | N | País | Resultado principal | OCEBM | RoB |
+|---------|--------|---|------|---------------------|-------|-----|
+| ...     | ...    |...| ...  | ...                 | ...   | ... |
+
+### Consistencia y discordancia
+**Dirección del efecto:** ... — **Magnitud:** ... — **Explicaciones de discordancia:** ...
+
+### Calidad global
+**Distribución de diseños:** ... — **RoB:** ... — **Certeza GRADE:** ... — razón
+
+### Gaps de evidencia
+- ...
+
+### Implicaciones para la práctica
+**Apoyado:** ... — **No apoyado:** ... — **Individualización:** ... — **Investigación prioritaria:** ...
+
+**Confianza de la síntesis:** alta / media / baja — razón
+
+## Rules
+- <3 studies → label "narrative summary, not synthesis"; synthesis_confidence: "low"
+- Heterogeneous studies → do not force synthesis; explain why combined inference not supported
+- Different clinical questions → ask user to narrow the set; do not invent unifying question
+- Token economy: prefer abstracts + key extracted passages, not full text of all papers
+- es-ES for narrative (with markdown table), English for JSON
+<!-- ZOTERO:END -->

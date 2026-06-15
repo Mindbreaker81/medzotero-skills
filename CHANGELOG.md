@@ -5,6 +5,29 @@ All notable changes to medzotero-skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-15
+
+### Changed
+- **Despliegue LLM-for-Zotero ahora con fuente única de verdad.** `deploy/flatten-for-llm-for-zotero.sh` se reescribió como un script genérico que deriva cada archivo Zotero desde su `SKILL.md` (`id` ← `name`, `match` ← lista `zotero_match:` del frontmatter, cuerpo ← bloque `<!-- ZOTERO:START/END -->`), en lugar de mantener copias duplicadas dentro del propio script. Elimina el riesgo de divergencia (drift) entre las dos representaciones. La salida generada es idéntica a la anterior.
+- **Schemas estrictos.** Los 5 `schema.json` ahora declaran `additionalProperties: false` en la raíz y en todos los objetos anidados y `$defs` (excepto el mapa dinámico `study_designs_summary` y los mapas item-level de NOS). Así la validación de CI detecta nombres de campo mal escritos en los ejemplos.
+- **Rediseño de `nos` (appraise-evidence).** Estructura item-level: `selection`/`comparability`/`outcome`|`exposure` como mapas de `{score, rationale}` (nuevo `$defs/nosItem`), coherente con el ejemplo y con la regla "item-level scoring" del SKILL.md. Sustituye los contadores planos previos.
+- **`$id` de los schemas** alineado con la ubicación real del archivo (`…/skills/<name>/schema.json`).
+- **README:** actualizada la sección de despliegue y personalización para reflejar el nuevo mecanismo; añadida sección "Calidad y tests".
+
+### Added
+- **`eval/validate_examples.py`** — valida los bloques JSON de los `examples/` contra cada `schema.json` y, además, verifica que cada `schema.json` es un JSON Schema válido (draft 2020-12).
+- **`eval/test_deploy.sh`** — smoke test del script de despliegue (frontmatter y cuerpo bien formados).
+- **CI (GitHub Actions, `.github/workflows/ci.yml`)** — ejecuta validación de schemas, smoke test de despliegue y ShellCheck en cada push y pull request.
+- **5 ejemplos nuevos en appraise-evidence** que cubren las herramientas antes sin ejemplo: AMSTAR-2 (revisión sistemática), QUADAS-2 (precisión diagnóstica), PROBAST (modelo pronóstico), ROBINS-I (estudio no aleatorizado) y AGREE II (guía).
+- **`zotero_match:`** en el frontmatter de cada `SKILL.md` y bloque condensado delimitado por `<!-- ZOTERO:START/END -->`.
+
+### Fixed
+- **appraise-evidence (ejemplo cohort-NOS):** `appraisal_tool` corregido de `"nos"` a `"nos-cohort"` y la clave `nos_cohort` renombrada a `nos` (con `version: "cohort"`) para cumplir el `schema.json`. Detectado por la nueva validación de schemas.
+- **appraise-evidence (schema):** `ocebm_question_type` permitía `null` por `type` pero el `enum` no lo incluía; añadido `null` al `enum` para que sea coherente (relevante p. ej. en guías sin tipo de pregunta OCEBM).
+
+### Removed
+- 5 archivos `.gitkeep` vestigiales en directorios que ya contienen archivos reales.
+
 ## [1.0.0] - 2026-05-17
 
 ### Added
@@ -38,4 +61,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Specialty context: Interventional pulmonology with Spain/SEPAR/AEMPS focus
 - MCIDs included for pulmonary outcomes (6MWD, FEV1, mMRC, CAT, SGRQ, K-BILD)
 
+[1.1.0]: https://github.com/Mindbreaker81/medzotero-skills/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Mindbreaker81/medzotero-skills/releases/tag/v1.0.0
