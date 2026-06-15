@@ -264,7 +264,7 @@ Synthesize evidence across multiple papers on the same clinical question. Output
 - If the search returns too many irrelevant results (e.g., treatment guidelines instead of original studies), ask the user to paste the specific papers they want synthesized or to narrow the search terms.
 - If an abstract is truncated or incomplete in Zotero, proceed with available information OR ask the user to paste the complete abstract. DO NOT hang or retry indefinitely.
 
-## Workflow (6 steps)
+## Workflow (7 steps)
 1. If only one paper selected: ask user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
 2. Clarify clinical question (PICO / PIO / PIRD). If papers span different questions, ask user to narrow the set.
 3. Build evidence map: one row per study with study_id, design, country, n, population, intervention, comparator, primary_outcome (name/effect/ci_95), ocebm_level, risk_of_bias, key_limitations, funding.

@@ -69,6 +69,17 @@
       "type": ["object", "null"],
       "additionalProperties": false,
       "description": "Newcastle-Ottawa Scale (for cohort or case-control). Item-level: each domain is a map of NOS item name to {score, rationale}. Use `outcome` for cohorts and `exposure` for case-control studies.",
+      "required": ["version", "selection", "comparability", "total_stars", "max_stars"],
+      "allOf": [
+        {
+          "if": {"properties": {"version": {"const": "cohort"}}, "required": ["version"]},
+          "then": {"required": ["outcome"], "not": {"required": ["exposure"]}}
+        },
+        {
+          "if": {"properties": {"version": {"const": "case-control"}}, "required": ["version"]},
+          "then": {"required": ["exposure"], "not": {"required": ["outcome"]}}
+        }
+      ],
       "properties": {
         "version": {"type": "string", "enum": ["cohort", "case-control"]},
         "selection": {"type": "object", "additionalProperties": {"$ref": "#/$defs/nosItem"}},
@@ -190,6 +201,7 @@
     "nosItem": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["score", "rationale"],
       "properties": {
         "score": {"type": "integer", "minimum": 0, "maximum": 2},
         "rationale": {"type": "string"}

@@ -82,7 +82,7 @@
 
 ### Riesgo de sesgo (ROB 2)
 
-| Dominio | Juicio | Ración |
+| Dominio | Juicio | Razón |
 |---------|--------|--------|
 | 1. Proceso de aleatorización | Bajo | Sistema de aleatorización web centralizado con bloques permutados, estratificado por centro y tamaño de nódulo. Ocultación de la asignación hasta el momento del procedimiento. |
 | 2. Desviaciones de las intervenciones previstas | Bajo | El cegamiento de los intervencionistas no fue posible debido a las diferencias de dispositivo, pero los evaluadores de resultados (patólogos) estaban cegados a la asignación. No se reportaron desviaciones del protocolo. |
@@ -105,7 +105,7 @@
 
 **Certeza final:** Moderada
 
-**Ración:** RCT de alta calidad con bajo riesgo de sesgo, degradado un nivel por indirectez (experiencia operativa, especificidad tecnológica).
+**Razón:** RCT de alta calidad con bajo riesgo de sesgo, degradado un nivel por indirectez (experiencia operativa, especificidad tecnológica).
 
 ### Banderas rojas
 

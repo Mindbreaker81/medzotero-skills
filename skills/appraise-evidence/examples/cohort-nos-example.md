@@ -142,7 +142,7 @@
 
 **Certeza final:** Muy baja
 
-**Ración:** Estudio observacional comenzando en certeza baja, degradado dos niveles por riesgo de sesgo (controles históricos) e indirectez (experiencia en centros terciarios).
+**Razón:** Estudio observacional comenzando en certeza baja, degradado dos niveles por riesgo de sesgo (controles históricos) e indirectez (experiencia en centros terciarios).
 
 ### Banderas rojas
 

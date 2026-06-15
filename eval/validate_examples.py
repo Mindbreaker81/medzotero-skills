@@ -56,7 +56,11 @@ def main() -> int:
             print(f"  (no examples/ for {skill_dir.name})")
             continue
 
-        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        try:
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            failures.append(f"{schema_path.relative_to(REPO_ROOT)}: invalid JSON: {exc}")
+            continue
         try:
             Draft202012Validator.check_schema(schema)
         except Exception as exc:  # noqa: BLE001 - report any meta-schema violation

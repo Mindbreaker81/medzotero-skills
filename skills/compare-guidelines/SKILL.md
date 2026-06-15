@@ -156,7 +156,7 @@ See `schema.json` in this skill folder for the formal JSON schema. Key top-level
       "guideline_url": "..."
     }
   ],
-  "overall_alignment": "aligned | extends | refines | contradicts | premature-to-change | mixed",
+  "overall_alignment": "aligned | extends | refines | contradicts | premature-to-change | mixed | no-relevant-guideline",
   "relative_evidence_strength": "paper-stronger | paper-weaker | comparable | not-directly-comparable",
   "recommended_action": "continue-current-practice | monitor-for-guideline-update | discuss-in-mdd | wait-for-replication | consider-individualized-change",
   "recommended_action_rationale": "...",

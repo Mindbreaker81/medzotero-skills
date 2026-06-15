@@ -51,6 +51,11 @@ for skill_md in "$SKILLS_SRC"/*/SKILL.md; do
     echo "Skipping $skill_md: no frontmatter name:" >&2
     continue
   fi
+  # id becomes a filename below; reject anything that could escape OUTPUT_DIR.
+  if [[ ! "$id" =~ ^[a-z0-9][a-z0-9._-]*$ ]]; then
+    echo "Skipping $skill_md: unsafe skill name '$id' (expected [a-z0-9._-])" >&2
+    continue
+  fi
   if [ -z "$matches" ]; then
     echo "Skipping $skill_md ($id): no zotero_match: patterns" >&2
     continue
