@@ -6,10 +6,12 @@ push and pull request (see `.github/workflows/ci.yml`) and can also be run local
 ## Checks
 
 ### `validate_examples.py` — schema validation
-Extracts every ```json block from each `skills/<name>/examples/*.md` and validates it
-against that skill's `schema.json` (JSON Schema draft 2020-12). Fails if any example
-JSON is malformed or violates its schema. This is what catches drift between the
-documented output shape and the schema.
+First checks that each `skills/<name>/schema.json` is itself a valid JSON Schema
+(draft 2020-12, via `check_schema`). Then extracts every ```json block from each
+`skills/<name>/examples/*.md` and validates it against that skill's schema. Fails if a
+schema is invalid, or if any example JSON is malformed or violates its schema. Because the
+schemas use `additionalProperties: false`, this also catches misspelled or stray field
+names in the examples.
 
 ```bash
 pip install -r eval/requirements.txt

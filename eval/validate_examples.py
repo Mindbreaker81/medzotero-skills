@@ -57,6 +57,11 @@ def main() -> int:
             continue
 
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        try:
+            Draft202012Validator.check_schema(schema)
+        except Exception as exc:  # noqa: BLE001 - report any meta-schema violation
+            failures.append(f"{schema_path.relative_to(REPO_ROOT)}: invalid JSON Schema: {exc}")
+            continue
         validator = Draft202012Validator(schema)
 
         for md_path in sorted(examples_dir.glob("*.md")):
