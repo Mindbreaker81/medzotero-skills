@@ -4,6 +4,8 @@
 
 Kit de skills médicos para investigación biomédica en Zotero, especializado en neumología.
 
+**Versión:** 1.0.0 — consulta el [CHANGELOG](CHANGELOG.md) para el detalle de cambios (incluidos los cambios sin publicar).
+
 ## Propósito
 
 Este repositorio incluye 5 skills portables en markdown para análisis crítico de literatura biomédica, compatibles con:
