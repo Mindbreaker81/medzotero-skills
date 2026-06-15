@@ -1,6 +1,11 @@
 ---
 name: extract-pico
 description: Extract study type and structured PICO (Population, Intervention, Comparison, Outcome) from a biomedical paper. Detects study design first, then applies the appropriate extraction template — full PICO for RCTs and SRs, PIO for single-arm cohorts, PIRD for diagnostic accuracy, population-only for case series. Use whenever the user asks to analyze, summarize, extract from, or appraise a biomedical paper, even if PICO is not mentioned explicitly. Also trigger for queries like "what does this paper study", "what's the design of this study", or "summarize this clinical study".
+zotero_match:
+  - /extract pico/i
+  - /summarize/i
+  - /analyze/i
+  - /what's the design/i
 ---
 
 # Extract PICO
@@ -174,3 +179,49 @@ See `examples/rct-example.md` and `examples/cohort-example.md` for fully worked 
 ## Output language
 
 Respond in es-ES for the narrative section. JSON remains in English (field names and enum values are English-language conventions). Within JSON string values, preserve original-language terms when they appear in the source paper.
+
+<!-- Condensed variant for LLM-for-Zotero Agent Mode. `deploy/flatten-for-llm-for-zotero.sh`
+     emits everything between ZOTERO:START and ZOTERO:END verbatim (plus id/match frontmatter
+     built from `zotero_match` above) to ~/Zotero/llm-for-zotero/skills/.
+     Keep it in sync with the full skill when editing. -->
+<!-- ZOTERO:START -->
+# Extract PICO
+
+Extract study type and PICO from this paper.
+
+## Study Types
+rct, cohort-prospective, cohort-retrospective, case-control, diagnostic-accuracy, systematic-review, case-series, case-report, editorial-commentary, basic-translational, other
+
+## Templates
+- RCT/SR: full PICO
+- Cohort/case-series: PIO (no comparator)
+- Diagnostic: PIRD (Population, Index test, Reference standard, Disorder)
+- Editorial/case-report/basic: population only, set pico_applicable: false
+
+## Output (JSON first, then Spanish narrative)
+
+```json
+{
+  "study_type": "...",
+  "pico_applicable": true,
+  "pico": {
+    "population": {"description": "...", "setting": "...", "country_or_region": "..."},
+    "intervention": {"description": "..."},
+    "comparison": {"description": "..."},
+    "outcomes": {"primary": [{"name": "...", "effect": "...", "ci_95": "..."}]}
+  },
+  "sample_size": {"analyzed": 0},
+  "extraction_confidence": "high"
+}
+```
+
+## Resumen estructurado (es-ES)
+**Tipo de estudio:** ...
+**Pregunta clínica:** ...
+**Población:** ...
+**Resultado principal:** ...
+
+## Rules
+- Use null for missing data
+- es-ES for narrative, English for JSON
+<!-- ZOTERO:END -->

@@ -21,9 +21,10 @@
   "study_type_resolved": "cohort-prospective",
   "ocebm_level": 3,
   "ocebm_question_type": "diagnosis",
-  "appraisal_tool": "nos",
+  "appraisal_tool": "nos-cohort",
   "appraisal_applicable": true,
-  "nos_cohort": {
+  "nos": {
+    "version": "cohort",
     "selection": {
       "representativeness_of_exposed_cohort": {
         "score": 1,

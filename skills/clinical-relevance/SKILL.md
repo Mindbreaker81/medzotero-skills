@@ -1,6 +1,13 @@
 ---
 name: clinical-relevance
 description: Assess whether a biomedical paper changes clinical practice for the user's specialty (interventional pulmonology, Spain). Distinguishes statistical significance from clinical significance, evaluates population applicability to typical Spanish pulmonary patients, considers availability of interventions in the Spanish healthcare system (SNS) and AEMPS drug approval status, and outputs an actionable judgment. Use after extract-pico and appraise-evidence have run, or independently when the user asks "does this change my practice", "is this clinically relevant", "should I act on this", "is this applicable to my patients", "is this practice-changing", "relevancia clínica".
+zotero_match:
+  - /clinical relevance/i
+  - /practice changing/i
+  - /change my practice/i
+  - /applicable to my patients/i
+  - /should i act/i
+  - /relevancia clínica/i
 ---
 
 # Clinical Relevance
@@ -152,3 +159,67 @@ See `examples/practice-changing-rct-example.md` and `examples/premature-singlece
 ## Output language
 
 Respond in es-ES for the narrative section. JSON remains in English (field names and enum values are English-language conventions). Within JSON string values, preserve original-language terms when they appear in the source paper.
+
+<!-- Condensed variant for LLM-for-Zotero Agent Mode. `deploy/flatten-for-llm-for-zotero.sh`
+     emits everything between ZOTERO:START and ZOTERO:END verbatim (plus id/match frontmatter
+     built from `zotero_match` above) to ~/Zotero/llm-for-zotero/skills/.
+     Keep it in sync with the full skill when editing. -->
+<!-- ZOTERO:START -->
+# Clinical Relevance
+
+Assess whether this paper changes clinical practice for Spanish pulmonology. Output JSON first, then Spanish narrative.
+
+## Workflow (5 dimensions)
+1. Effect magnitude — clinical vs statistical significance. Use MCIDs: 6MWD 30m, FEV1 100mL/10%, mMRC 1pt, CAT 2pt, SGRQ 4pt, K-BILD 5pt
+2. Population applicability to Spanish pneumology patients — age, smoking, exclusions
+3. Intervention availability in Spain — AEMPS status, SNS funding, procedure availability (EBUS, cryobiopsy, robotic bronchoscopy)
+4. Translation to practice — changes/confirmations/contradictions to current workflow
+5. Patient-relevant vs surrogate endpoints — mortality, hospitalization, QoL vs biomarkers
+
+## Output Schema (JSON first)
+
+```json
+{
+  "practice_changing": "yes | yes-with-caveats | confirms-current-practice | not-applicable | premature",
+  "effect_magnitude": {
+    "primary_outcome": "...",
+    "clinical_significance": "large | moderate | small | unclear",
+    "mcid_referenced": "...",
+    "absolute_effect": "..."
+  },
+  "population_applicability": {
+    "fit_to_spanish_pneumology": "high | moderate | low",
+    "key_exclusions_that_limit_applicability": ["..."]
+  },
+  "intervention_availability_spain": {
+    "available": "yes | restricted | no | not-yet",
+    "details": "...",
+    "aemps_status": "...",
+    "sns_funding": "..."
+  },
+  "patient_relevance": {
+    "endpoint_type": "patient-important | composite | surrogate",
+    "details": "..."
+  },
+  "actionable_changes": ["..."],
+  "implementation_barriers": ["..."],
+  "confidence_in_judgment": "high | medium | low"
+}
+```
+
+## Relevancia clínica (es-ES)
+**¿Cambia mi práctica?** sí / sí con reservas / confirma / no aplicable / prematuro
+**Magnitud del efecto:** ... (MCID, significancia clínica vs estadística)
+**Aplicabilidad al paciente del SNS:** ... (población, exclusiones)
+**Disponibilidad en España:** ... (AEMPS, financiación SNS)
+**Outcomes relevantes para el paciente:** ... (patient-important vs surrogate)
+**Acciones concretas:** ...
+**Barreras de implementación:** ...
+**Confianza del juicio:** alta / media / baja
+
+## Rules
+- Single small study non-replicated → "premature"
+- Industry-funded + single-center + surrogate → "premature"
+- Do not extrapolate beyond population studied
+- es-ES for narrative, English for JSON
+<!-- ZOTERO:END -->

@@ -1,433 +1,79 @@
-#!/bin/bash
-# Convert medzotero skills to LLM-for-Zotero format (ultra-minimal for Agent Mode)
-# LLM-for-Zotero uses id + match patterns, not name + description
-# Generates one minimal .md per skill, optimized for the model's context window
+#!/usr/bin/env bash
+# Convert medzotero skills to LLM-for-Zotero format (ultra-minimal for Agent Mode).
+#
+# LLM-for-Zotero uses `id` + `match` patterns, not the Claude Code `name` + `description`.
+# Rather than maintaining a second copy of every skill here, this script DERIVES each
+# Zotero file from its skills/<name>/SKILL.md (single source of truth):
+#   - `id`    <- the SKILL.md frontmatter `name`
+#   - `match` <- each entry under the frontmatter `zotero_match:` list
+#   - body    <- the text between the `<!-- ZOTERO:START -->` / `<!-- ZOTERO:END -->` markers
+#
+# Edit the SKILL.md (frontmatter + ZOTERO block); never edit generated output by hand.
 
-set -e
+set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SKILLS_SRC="$(cd "$SCRIPT_DIR/.." && pwd)/skills"
 OUTPUT_DIR="${ZOTERO_DATA_DIR:-$HOME/Zotero}/llm-for-zotero/skills"
+
 mkdir -p "$OUTPUT_DIR"
 
-# ---------- extract-pico ----------
-cat > "$OUTPUT_DIR/extract-pico.md" << 'EOF'
----
-id: extract-pico
-match: /extract pico/i
-match: /summarize/i
-match: /analyze/i
-match: /what's the design/i
----
-# Extract PICO
+if [ ! -d "$SKILLS_SRC" ]; then
+  echo "Error: skills directory not found at $SKILLS_SRC" >&2
+  exit 1
+fi
 
-Extract study type and PICO from this paper.
+count=0
+for skill_md in "$SKILLS_SRC"/*/SKILL.md; do
+  [ -f "$skill_md" ] || continue
 
-## Study Types
-rct, cohort-prospective, cohort-retrospective, case-control, diagnostic-accuracy, systematic-review, case-series, case-report, editorial-commentary, basic-translational, other
+  # id <- frontmatter `name:` (first occurrence)
+  id="$(awk -F': *' '/^name:[[:space:]]/ {print $2; exit}' "$skill_md")"
 
-## Templates
-- RCT/SR: full PICO
-- Cohort/case-series: PIO (no comparator)
-- Diagnostic: PIRD (Population, Index test, Reference standard, Disorder)
-- Editorial/case-report/basic: population only, set pico_applicable: false
-
-## Output (JSON first, then Spanish narrative)
-
-```json
-{
-  "study_type": "...",
-  "pico_applicable": true,
-  "pico": {
-    "population": {"description": "...", "setting": "...", "country_or_region": "..."},
-    "intervention": {"description": "..."},
-    "comparison": {"description": "..."},
-    "outcomes": {"primary": [{"name": "...", "effect": "...", "ci_95": "..."}]}
-  },
-  "sample_size": {"analyzed": 0},
-  "extraction_confidence": "high"
-}
-```
-
-## Resumen estructurado (es-ES)
-**Tipo de estudio:** ...
-**Pregunta clínica:** ...
-**Población:** ...
-**Resultado principal:** ...
-
-## Rules
-- Use null for missing data
-- es-ES for narrative, English for JSON
-EOF
-
-echo "Wrote $OUTPUT_DIR/extract-pico.md"
-
-# ---------- appraise-evidence ----------
-cat > "$OUTPUT_DIR/appraise-evidence.md" << 'EOF'
----
-id: appraise-evidence
-match: /appraise/i
-match: /critical appraisal/i
-match: /risk of bias/i
-match: /level of evidence/i
-match: /grade/i
-match: /should i trust/i
-match: /is this study good/i
----
-# Appraise Evidence
-
-Apply the appropriate critical appraisal framework based on study type. Output JSON first, then Spanish narrative.
-
-## Tool Selection by Study Type
-- rct, cluster-rct, crossover-rct → ROB 2 (5 domains)
-- systematic-review → AMSTAR-2
-- cohort-*, case-control → Newcastle-Ottawa Scale (NOS)
-- diagnostic-accuracy → QUADAS-2
-- prognostic-model → PROBAST
-- clinical-practice-guideline → AGREE II
-- non-randomized-controlled, observational interventions → ROBINS-I
-- case-report/series → JBI checklist
-- editorial/commentary → narrative-only, set appraisal_applicable: false
-
-## Workflow
-1. Resolve study_type
-2. Assign OCEBM 2011 Level of Evidence (1-5) for the question type (therapy/diagnosis/prognosis/harm/screening)
-3. Apply the matching tool with item-level judgments + rationale
-4. Apply GRADE certainty for primary outcome (start High for RCT, Low for observational; downgrade for risk-of-bias, inconsistency, indirectness, imprecision, publication-bias; upgrade for large effect, dose-response, plausible-confounding-reduces-effect)
-5. Highlight red flags
-6. Output JSON, then Spanish narrative
-
-## Output Schema (JSON first)
-
-```json
-{
-  "study_type_resolved": "...",
-  "ocebm_level": 2,
-  "ocebm_question_type": "therapy",
-  "appraisal_tool": "rob-2",
-  "appraisal_applicable": true,
-  "rob_2": {
-    "domain_1_randomization": {"judgment": "low", "rationale": "..."},
-    "domain_2_deviations": {"judgment": "low", "rationale": "..."},
-    "domain_3_missing_data": {"judgment": "low", "rationale": "..."},
-    "domain_4_measurement": {"judgment": "low", "rationale": "..."},
-    "domain_5_selection_of_reported_result": {"judgment": "low", "rationale": "..."},
-    "overall": "low"
-  },
-  "grade_assessment": {
-    "outcome": "...",
-    "starting_certainty": "high",
-    "downgrades": [{"reason": "imprecision", "magnitude": 1, "rationale": "..."}],
-    "upgrades": [],
-    "final_certainty": "moderate",
-    "rationale": "..."
-  },
-  "red_flags": ["..."],
-  "appraiser_overall_judgment": "trustworthy",
-  "appraisal_confidence": "high"
-}
-```
-
-For non-RCT studies, replace `rob_2` with the matching tool key: `amstar_2`, `nos`, `quadas_2`, `probast`, `agree_ii`, `robins_i`. Each with item-level judgments + rationale.
-
-## Valoración crítica (es-ES)
-**Tipo de estudio resuelto:** ...
-**Nivel de evidencia OCEBM:** ...
-**Herramienta de valoración:** ...
-**Riesgo de sesgo (resumen por dominios):** ...
-**Certeza GRADE para resultado principal:** ...
-**Señales de alerta:** ...
-**Juicio global:** confiable / confiable con reservas / usar con precaución / no fiable
-**Confianza en la valoración:** alta / media / baja
-
-## Rules
-- Item-level scoring with rationale, never overall-only
-- For insufficient information, judgment = "no-information" (do not guess)
-- For editorials/commentaries, set appraisal_applicable: false
-- es-ES for narrative, English for JSON
-EOF
-
-echo "Wrote $OUTPUT_DIR/appraise-evidence.md"
-
-# ---------- clinical-relevance ----------
-cat > "$OUTPUT_DIR/clinical-relevance.md" << 'EOF'
----
-id: clinical-relevance
-match: /clinical relevance/i
-match: /practice changing/i
-match: /change my practice/i
-match: /applicable to my patients/i
-match: /should i act/i
-match: /relevancia clínica/i
----
-# Clinical Relevance
-
-Assess whether this paper changes clinical practice for Spanish pulmonology. Output JSON first, then Spanish narrative.
-
-## Workflow (5 dimensions)
-1. Effect magnitude — clinical vs statistical significance. Use MCIDs: 6MWD 30m, FEV1 100mL/10%, mMRC 1pt, CAT 2pt, SGRQ 4pt, K-BILD 5pt
-2. Population applicability to Spanish pneumology patients — age, smoking, exclusions
-3. Intervention availability in Spain — AEMPS status, SNS funding, procedure availability (EBUS, cryobiopsy, robotic bronchoscopy)
-4. Translation to practice — changes/confirmations/contradictions to current workflow
-5. Patient-relevant vs surrogate endpoints — mortality, hospitalization, QoL vs biomarkers
-
-## Output Schema (JSON first)
-
-```json
-{
-  "practice_changing": "yes | yes-with-caveats | confirms-current-practice | not-applicable | premature",
-  "effect_magnitude": {
-    "primary_outcome": "...",
-    "clinical_significance": "large | moderate | small | unclear",
-    "mcid_referenced": "...",
-    "absolute_effect": "..."
-  },
-  "population_applicability": {
-    "fit_to_spanish_pneumology": "high | moderate | low",
-    "key_exclusions_that_limit_applicability": ["..."]
-  },
-  "intervention_availability_spain": {
-    "available": "yes | restricted | no | not-yet",
-    "details": "...",
-    "aemps_status": "...",
-    "sns_funding": "..."
-  },
-  "patient_relevance": {
-    "endpoint_type": "patient-important | composite | surrogate",
-    "details": "..."
-  },
-  "actionable_changes": ["..."],
-  "implementation_barriers": ["..."],
-  "confidence_in_judgment": "high | medium | low"
-}
-```
-
-## Relevancia clínica (es-ES)
-**¿Cambia mi práctica?** sí / sí con reservas / confirma / no aplicable / prematuro
-**Magnitud del efecto:** ... (MCID, significancia clínica vs estadística)
-**Aplicabilidad al paciente del SNS:** ... (población, exclusiones)
-**Disponibilidad en España:** ... (AEMPS, financiación SNS)
-**Outcomes relevantes para el paciente:** ... (patient-important vs surrogate)
-**Acciones concretas:** ...
-**Barreras de implementación:** ...
-**Confianza del juicio:** alta / media / baja
-
-## Rules
-- Single small study non-replicated → "premature"
-- Industry-funded + single-center + surrogate → "premature"
-- Do not extrapolate beyond population studied
-- es-ES for narrative, English for JSON
-EOF
-
-echo "Wrote $OUTPUT_DIR/clinical-relevance.md"
-
-# ---------- synthesize-collection ----------
-cat > "$OUTPUT_DIR/synthesize-collection.md" << 'EOF'
----
-id: synthesize-collection
-match: /synthesize collection/i
-match: /evidence synthesis/i
-match: /what does the evidence say/i
-match: /summarize my collection/i
-match: /evidence gaps/i
-match: /síntesis de evidencia/i
----
-# Synthesize Collection
-
-Synthesize evidence across multiple papers on the same clinical question. Output JSON first, then Spanish narrative with markdown evidence map table.
-
-## Inputs
-- Multiple papers (Zotero collection, selection, or pasted abstracts).
-- Optional: focused clinical question. If absent, infer and confirm in PICO format before synthesizing.
-
-## CRITICAL: Do NOT modify Zotero metadata
-- NEVER modify title, authors, journal, year, or any Zotero item metadata.
-- ONLY read and analyze papers for synthesis.
-- If you need to find related papers, use Zotero search but DO NOT modify any item.
-
-## When searching Zotero collection for related papers:
-- Use SPECIFIC search terms from the selected paper: title keywords, first author, year, journal.
-- Search for the specific clinical question/intervention/comparator (e.g., "azithromycin bronchiectasis BAT EMBRACE").
-- Filter by item type: only include original research articles (RCTs, cohort studies, case series). EXCLUDE guidelines, reviews, editorials, commentaries unless explicitly requested.
-- Limit search to the user's Zotero library — do NOT search outside sources.
-- If the search returns too many irrelevant results (e.g., treatment guidelines instead of original studies), ask the user to paste the specific papers they want synthesized or to narrow the search terms.
-- If an abstract is truncated or incomplete in Zotero, proceed with available information OR ask the user to paste the complete abstract. DO NOT hang or retry indefinitely.
-
-## Workflow (6 steps)
-1. If only one paper selected: ask user if they want you to search their Zotero collection for related papers on the same topic, or if they want to paste additional paper abstracts. DO NOT automatically search or modify the selected paper.
-2. Clarify clinical question (PICO / PIO / PIRD). If papers span different questions, ask user to narrow the set.
-3. Build evidence map: one row per study with study_id, design, country, n, population, intervention, comparator, primary_outcome (name/effect/ci_95), ocebm_level, risk_of_bias, key_limitations, funding.
-4. Assess consistency: direction_of_effect (consistent/mixed/conflicting), magnitude_consistency, explanations_for_discordance (population, intervention, methodology, era, funding).
-5. Aggregate quality: study designs distribution, RoB distribution, GRADE certainty for primary outcome (start High for RCT body / Low for observational; downgrade for risk-of-bias, inconsistency, indirectness, imprecision, publication-bias).
-6. Identify evidence gaps: populations underrepresented, outcomes not studied, comparators not tested, settings not studied, methodological gaps.
-7. Practice implications: supported / not_supported / requires_individualization / high_priority_research.
-
-## Output Schema (JSON first)
-
-```json
-{
-  "clinical_question": "...",
-  "number_of_studies": 0,
-  "study_designs_summary": {"rct": 0, "cohort-prospective": 0},
-  "evidence_map": [
-    {
-      "study_id": "FirstAuthorYear",
-      "design": "rct",
-      "country": "...",
-      "n": 0,
-      "population": "...",
-      "intervention": "...",
-      "comparator": "...",
-      "primary_outcome": {"name": "...", "effect": "...", "ci_95": "..."},
-      "ocebm_level": 2,
-      "risk_of_bias": "low",
-      "key_limitations": "...",
-      "funding": "..."
+  # match patterns <- items under `zotero_match:` (lines like `  - /foo/i`), stop at next key or `---`
+  matches="$(awk '
+    /^zotero_match:[[:space:]]*$/ {f=1; next}
+    f && /^---[[:space:]]*$/      {f=0}
+    f && /^[A-Za-z]/              {f=0}
+    f && /^[[:space:]]*-[[:space:]]+/ {
+      line=$0; sub(/^[[:space:]]*-[[:space:]]+/, "", line); print line
     }
-  ],
-  "consistency_assessment": {
-    "direction_of_effect": "consistent | mixed | conflicting",
-    "magnitude_consistency": "...",
-    "explanations_for_discordance": ["..."]
-  },
-  "aggregate_quality": {
-    "overall_grade_certainty": "high | moderate | low | very-low",
-    "rationale": "..."
-  },
-  "evidence_gaps": ["..."],
-  "practice_implications": {
-    "supported": ["..."],
-    "not_supported": ["..."],
-    "requires_individualization": ["..."],
-    "high_priority_research": ["..."]
-  },
-  "synthesis_confidence": "high | medium | low"
-}
-```
+  ' "$skill_md")"
 
-## Síntesis de evidencia (es-ES)
-**Pregunta clínica (PICO):** ...
+  # body <- text between the ZOTERO markers
+  body="$(awk '
+    /<!-- ZOTERO:START -->/ {f=1; next}
+    /<!-- ZOTERO:END -->/   {f=0}
+    f                       {print}
+  ' "$skill_md")"
 
-### Mapa de evidencia
-| Estudio | Diseño | N | País | Resultado principal | OCEBM | RoB |
-|---------|--------|---|------|---------------------|-------|-----|
-| ...     | ...    |...| ...  | ...                 | ...   | ... |
+  if [ -z "$id" ]; then
+    echo "Skipping $skill_md: no frontmatter name:" >&2
+    continue
+  fi
+  if [ -z "$matches" ]; then
+    echo "Skipping $skill_md ($id): no zotero_match: patterns" >&2
+    continue
+  fi
+  if [ -z "$body" ]; then
+    echo "Skipping $skill_md ($id): no ZOTERO block" >&2
+    continue
+  fi
 
-### Consistencia y discordancia
-**Dirección del efecto:** ... — **Magnitud:** ... — **Explicaciones de discordancia:** ...
+  out="$OUTPUT_DIR/$id.md"
+  {
+    echo "---"
+    echo "id: $id"
+    while IFS= read -r pattern; do
+      [ -n "$pattern" ] && echo "match: $pattern"
+    done <<< "$matches"
+    echo "---"
+    printf '%s\n' "$body"
+  } > "$out"
 
-### Calidad global
-**Distribución de diseños:** ... — **RoB:** ... — **Certeza GRADE:** ... — razón
-
-### Gaps de evidencia
-- ...
-
-### Implicaciones para la práctica
-**Apoyado:** ... — **No apoyado:** ... — **Individualización:** ... — **Investigación prioritaria:** ...
-
-**Confianza de la síntesis:** alta / media / baja — razón
-
-## Rules
-- <3 studies → label "narrative summary, not synthesis"; synthesis_confidence: "low"
-- Heterogeneous studies → do not force synthesis; explain why combined inference not supported
-- Different clinical questions → ask user to narrow the set; do not invent unifying question
-- Token economy: prefer abstracts + key extracted passages, not full text of all papers
-- es-ES for narrative (with markdown table), English for JSON
-EOF
-
-echo "Wrote $OUTPUT_DIR/synthesize-collection.md"
-
-# ---------- compare-guidelines ----------
-cat > "$OUTPUT_DIR/compare-guidelines.md" << 'EOF'
----
-id: compare-guidelines
-match: /compare guidelines/i
-match: /what do guidelines say/i
-match: /does this contradict/i
-match: /should guidelines change/i
-match: /consistent with separ/i
-match: /consistent with ats/i
-match: /consistent with ers/i
-match: /consistent with gold/i
-match: /consistent with gina/i
-match: /comparar con guías/i
-match: /comparar con guias/i
----
-# Compare Guidelines
-
-Compare a paper against current clinical practice guidelines (SEPAR, ATS, ERS, GOLD, GINA, IASLC, ESMO, NICE, AASM, etc.). Output JSON first, then Spanish narrative.
-
-## Critical: knowledge cutoff caveat
-Always state guideline version/year. Always include knowledge_cutoff_caveat in JSON and narrative. Recommend the user verify the live source. Never invent a guideline or recommendation.
-
-## Workflow
-1. Identify relevant guidelines by topic (STRICT RELEVANCE ONLY — do not mix topics). COPD: GOLD/GesEPOC; Asthma: GINA/GEMA; Lung cancer: IASLC/NCCN/ESMO/SEPAR; Nodules: Fleischner/BTS/Lung-RADS; ILD: ATS/ERS/JRS/ALAT; PH: ESC/ERS 2022; NTM: ATS/ERS/ESCMID/IDSA 2020; Sleep: AASM/SEPAR; Bronchoscopy: ACCP/ERS/SEPAR; CAP: ATS/IDSA/SEPAR; VTE/PE: ESC 2019/2020, ACCP 2016, ATS 2012, SEPAR 2021 (ONLY these — NOT coronary, valvular, or AF guidelines). For cardiac topics: ESC, AHA/ACC. For valvular: ESC/EACTS. For AF: ESC, AHA/ACC/HRS.
-2. Locate specific recommendation: quote (or paraphrase, flag if paraphrased), strength, certainty, year
-3. Classify alignment per guideline: aligned / extends / refines / contradicts / premature-to-change
-4. Assess relative evidence strength: paper-stronger / paper-weaker / comparable / not-directly-comparable
-5. Recommend action: continue-current-practice / monitor-for-guideline-update / discuss-in-mdd / wait-for-replication / consider-individualized-change
-6. Always include knowledge_cutoff_caveat
-
-## Output Schema (JSON first)
-
-```json
-{
-  "clinical_topic": "...",
-  "paper_summary_for_comparison": "...",
-  "relevant_guidelines": [
-    {
-      "society": "SEPAR",
-      "title": "...",
-      "year": 2023,
-      "version": "...",
-      "specific_recommendation_quoted": "...",
-      "recommendation_is_paraphrased": false,
-      "recommendation_strength": "strong | conditional | weak | not-stated",
-      "evidence_certainty_in_guideline": "high | moderate | low | very-low | not-stated",
-      "alignment": "aligned | extends | refines | contradicts | premature-to-change",
-      "rationale": "...",
-      "guideline_url": "..."
-    }
-  ],
-  "overall_alignment": "aligned | extends | refines | contradicts | premature-to-change | mixed | no-relevant-guideline",
-  "relative_evidence_strength": "paper-stronger | paper-weaker | comparable | not-directly-comparable",
-  "recommended_action": "continue-current-practice | monitor-for-guideline-update | discuss-in-mdd | wait-for-replication | consider-individualized-change",
-  "recommended_action_rationale": "...",
-  "knowledge_cutoff_caveat": "Las guías pueden haber sido actualizadas desde el entrenamiento del modelo. Verifique en [URL].",
-  "confidence": "high | medium | low",
-  "comparison_notes": "..."
-}
-```
-
-## Comparación con guías clínicas (es-ES)
-**Tema clínico:** ...
-**Resumen del paper para la comparación:** ...
-
-### Guías relevantes
-- **[Sociedad, año, versión]** — Recomendación: "..." (fuerza: ...; certeza: ...). **Alineación:** ...
-  - Razón: ...
-  - URL: ...
-
-### Fuerza relativa de la evidencia
-**Paper vs guía:** ... — razón
-
-### Acción recomendada
-... — razón
-
-### Caveat sobre actualización de guías
-Las recomendaciones citadas reflejan el conocimiento del modelo en el momento de su entrenamiento. **Verifique la versión vigente en [URL/sociedad].**
-
-**Confianza de la comparación:** alta / media / baja — razón
-
-## Rules
-- Always include knowledge_cutoff_caveat (mandatory)
-- Single small study + high RoB → alignment: "premature-to-change" regardless of effect direction
-- Multiple guidelines disagreeing → present each separately; overall_alignment: "mixed"
-- Topic not covered by any guideline → relevant_guidelines: []; comparison_notes: "no major guideline covers this topic to the model's knowledge"
-- If quoting is approximate → set recommendation_is_paraphrased: true; warn user to verify exact text
-- Cite SEPAR alongside international guidelines for Spanish context when applicable
-- es-ES for narrative, English for JSON; preserve original-language guideline text
-EOF
-
-echo "Wrote $OUTPUT_DIR/compare-guidelines.md"
+  echo "Wrote $out"
+  count=$((count + 1))
+done
 
 echo ""
-echo "All skills deployed. Restart Zotero to load."
+echo "$count skill(s) deployed to $OUTPUT_DIR. Restart Zotero to load."

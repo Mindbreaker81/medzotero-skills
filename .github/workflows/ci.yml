@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  validate-schemas:
+    name: Validate example JSON against schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: pip install -r eval/requirements.txt
+      - name: Validate examples
+        run: python3 eval/validate_examples.py
+
+  test-deploy:
+    name: Deploy script smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy smoke test
+        run: bash eval/test_deploy.sh
+
+  shellcheck:
+    name: ShellCheck deploy + eval scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        run: |
+          sudo apt-get update && sudo apt-get install -y shellcheck
+          shellcheck deploy/flatten-for-llm-for-zotero.sh eval/test_deploy.sh
